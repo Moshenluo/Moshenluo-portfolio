@@ -7,17 +7,13 @@
     <meta name="description" content="唐翊杰 - 数据分析师/算法工程师 Portfolio，展示项目经历和技能">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 粒子背景 / Particle Background -->
-    <div id="particles-js"></div>
-    
     <!-- 导航栏 / Navigation -->
     <nav class="navbar">
         <div class="container">
             <div class="logo">
-                <h1><span class="gradient-text">🧑‍💻 唐翊杰</span></h1>
+                <h1>🧑‍💻 唐翊杰</h1>
             </div>
             <ul class="nav-links">
                 <li><a href="#home">首页</a></li>
@@ -27,15 +23,10 @@
                 <li><a href="#resume">简历</a></li>
                 <li><a href="#contact">联系</a></li>
             </ul>
-            <div class="nav-actions">
-                <button class="theme-toggle" id="themeToggle" title="切换主题">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <div class="burger">
-                    <div class="line1"></div>
-                    <div class="line2"></div>
-                    <div class="line3"></div>
-                </div>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
             </div>
         </div>
     </nav>
@@ -45,69 +36,36 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <div class="hero-badge">
-                        <span class="pulse"></span>
-                        开放求职中
-                    </div>
-                    <h2 class="fade-in">你好，我是</h2>
-                    <h1 class="gradient-text typing-effect">唐翊杰</h1>
-                    <h3 class="glitch-text" data-text="数据分析师 / 算法工程师">数据分析师 / 算法工程师</h3>
-                    <p class="tagline">用数据驱动决策，用算法创造价值</p>
-                    
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="8">0</div>
-                            <div class="stat-label">项目完成</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="5">0</div>
-                            <div class="stat-label">技术栈</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="3">0</div>
-                            <div class="stat-label">实习经历</div>
-                        </div>
-                    </div>
-                    
+                    <h2>你好，我是</h2>
+                    <h1>唐翊杰</h1>
+                    <h3>数据分析师 / 算法工程师（求职中）</h3>
+                    <p class="tagline">
+                        以<strong>数据分析 + 机器学习 + 业务理解</strong>为核心，专注电商、制造、气候等场景的数据驱动决策。
+                    </p>
+                    <ul class="hero-highlights">
+                        <li>覆盖 <strong>EDA → 建模 → 可视化 → 报告</strong> 的完整数据科学项目闭环</li>
+                        <li>熟悉 <strong>Python / SQL / 可视化工具</strong> 与常见机器学习算法</li>
+                        <li>具备多段 <strong>数据 &amp; 视觉算法</strong> 实习经历，能快速落地业务需求</li>
+                    </ul>
                     <div class="hero-buttons">
-                        <a href="#projects" class="btn btn-primary">
-                            <i class="fas fa-rocket"></i> 查看项目
-                        </a>
-                        <a href="Tang_Yijie_Resume.pdf" class="btn btn-secondary" download>
-                            <i class="fas fa-download"></i> 下载简历
-                        </a>
+                        <a href="#projects" class="btn btn-primary">查看代表项目</a>
+                        <a href="Tang_Yijie_Resume.pdf" class="btn btn-secondary" download>下载简历 PDF</a>
                     </div>
-                    
+                    <div class="hero-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> 广东东莞 · 可接受异地</span>
+                        <span><i class="fas fa-calendar-check"></i> 2025.05 可入职</span>
+                    </div>
                     <div class="social-links">
-                        <a href="https://github.com/Moshenluo" target="_blank" class="social-icon">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="mailto:72540564@cityu-dg.edu.cn" class="social-icon">
-                            <i class="fas fa-envelope"></i>
-                        </a>
-                        <a href="tel:18692677391" class="social-icon">
-                            <i class="fas fa-phone"></i>
-                        </a>
+                        <a href="https://github.com/Moshenluo" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="mailto:72540564@cityu-dg.edu.cn"><i class="fas fa-envelope"></i></a>
+                        <a href="tel:18692677391"><i class="fas fa-phone"></i></a>
                     </div>
                 </div>
                 <div class="hero-image">
-                    <div class="profile-container">
-                        <div class="profile-ring"></div>
-                        <div class="profile-ring"></div>
-                        <div class="profile-ring"></div>
-                        <div class="profile-placeholder">
-                            <i class="fas fa-user-astronaut"></i>
-                        </div>
+                    <div class="profile-placeholder">
+                        <i class="fas fa-user-circle"></i>
                     </div>
                 </div>
-            </div>
-            
-            <!-- 滚动提示 / Scroll Indicator -->
-            <div class="scroll-indicator">
-                <div class="mouse">
-                    <div class="wheel"></div>
-                </div>
-                <div class="scroll-text">向下滚动</div>
             </div>
         </div>
     </section>
@@ -115,49 +73,34 @@
     <!-- 关于我 / About Section -->
     <section id="about" class="about">
         <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon">👤</span>
-                关于我
-            </h2>
+            <h2 class="section-title">关于我</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p class="lead-text">我是唐翊杰，目前就读于<strong>香港城市大学（东莞）</strong>数据科学专业，预计 2027 年毕业。我热爱数据科学和机器学习，致力于通过数据分析和技术创新解决实际问题。</p>
+                    <p>我是唐翊杰，目前就读于<strong>香港城市大学（东莞）</strong>数据科学专业，预计 2027 年毕业。我热爱数据科学和机器学习，致力于通过数据分析和技术创新解决实际问题。</p>
                     
                     <div class="info-grid">
-                        <div class="info-card">
-                            <div class="info-icon">
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <div class="info-content">
+                        <div class="info-item">
+                            <i class="fas fa-graduation-cap"></i>
+                            <div>
                                 <h4>教育背景</h4>
-                                <p><strong>香港城市大学（东莞）</strong></p>
-                                <p>数据科学硕士（QS100）2025.09 - 2027.06</p>
-                                <p><strong>上海海洋大学</strong></p>
-                                <p>信息管理与信息系统（双一流）2021.09 - 2025.06</p>
+                                <p>香港城市大学（东莞）- 数据科学硕士</p>
+                                <p>上海海洋大学 - 信息管理与信息系统</p>
                             </div>
                         </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">
-                                <i class="fas fa-briefcase"></i>
-                            </div>
-                            <div class="info-content">
+                        <div class="info-item">
+                            <i class="fas fa-briefcase"></i>
+                            <div>
                                 <h4>求职意向</h4>
-                                <p><strong>数据分析师 / 算法工程师</strong></p>
+                                <p>数据分析师 / 算法工程师</p>
                                 <p>2025.05 可入职</p>
-                                <p>全职工作</p>
                             </div>
                         </div>
-                        
-                        <div class="info-card">
-                            <div class="info-icon">
-                                <i class="fas fa-map-marker-alt"></i>
-                            </div>
-                            <div class="info-content">
+                        <div class="info-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
                                 <h4>所在地</h4>
-                                <p><strong>广东东莞</strong></p>
+                                <p>广东东莞</p>
                                 <p>可接受异地</p>
-                                <p>可远程办公</p>
                             </div>
                         </div>
                     </div>
@@ -169,79 +112,40 @@
     <!-- 技能 / Skills Section -->
     <section id="skills" class="skills">
         <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon">🛠️</span>
-                专业技能
-            </h2>
+            <h2 class="section-title">专业技能</h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
+                    <i class="fas fa-code"></i>
                     <h3>编程语言</h3>
-                    <div class="skill-bars">
-                        <div class="skill-bar-item">
-                            <div class="skill-bar-info">
-                                <span>Python</span>
-                                <span>90%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-bar-fill" data-width="90%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-bar-item">
-                            <div class="skill-bar-info">
-                                <span>SQL</span>
-                                <span>85%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-bar-fill" data-width="85%"></div>
-                            </div>
-                        </div>
-                        <div class="skill-bar-item">
-                            <div class="skill-bar-info">
-                                <span>HTML/CSS</span>
-                                <span>80%</span>
-                            </div>
-                            <div class="skill-bar">
-                                <div class="skill-bar-fill" data-width="80%"></div>
-                            </div>
-                        </div>
+                    <div class="skill-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">SQL</span>
+                        <span class="tag">HTML/CSS</span>
+                        <span class="tag">JavaScript</span>
                     </div>
                 </div>
-                
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
+                    <i class="fas fa-chart-line"></i>
                     <h3>数据分析</h3>
                     <div class="skill-tags">
-                        <span class="tag tag-lg">Pandas</span>
-                        <span class="tag tag-lg">NumPy</span>
+                        <span class="tag">Pandas</span>
+                        <span class="tag">NumPy</span>
                         <span class="tag">Excel</span>
                         <span class="tag">SAP/ERP</span>
-                        <span class="tag">Polars</span>
                     </div>
                 </div>
-                
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-brain"></i>
-                    </div>
+                    <i class="fas fa-brain"></i>
                     <h3>机器学习</h3>
                     <div class="skill-tags">
-                        <span class="tag tag-lg">Scikit-learn</span>
-                        <span class="tag tag-lg">CatBoost</span>
+                        <span class="tag">Scikit-learn</span>
+                        <span class="tag">CatBoost</span>
                         <span class="tag">Random Forest</span>
                         <span class="tag">XGBoost</span>
-                        <span class="tag">Gradient Boosting</span>
                     </div>
                 </div>
-                
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-eye"></i>
-                    </div>
+                    <i class="fas fa-eye"></i>
                     <h3>计算机视觉</h3>
                     <div class="skill-tags">
                         <span class="tag">图像处理</span>
@@ -250,29 +154,23 @@
                         <span class="tag">模型复现</span>
                     </div>
                 </div>
-                
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-chart-bar"></i>
-                    </div>
+                    <i class="fas fa-chart-bar"></i>
                     <h3>数据可视化</h3>
                     <div class="skill-tags">
-                        <span class="tag tag-lg">Tableau</span>
-                        <span class="tag tag-lg">PowerBI</span>
+                        <span class="tag">Tableau</span>
+                        <span class="tag">PowerBI</span>
                         <span class="tag">Matplotlib</span>
                         <span class="tag">Seaborn</span>
-                        <span class="tag">Lets-Plot</span>
                     </div>
                 </div>
-                
                 <div class="skill-card">
-                    <div class="skill-icon">
-                        <i class="fas fa-database"></i>
-                    </div>
+                    <i class="fas fa-database"></i>
                     <h3>数据管理</h3>
                     <div class="skill-tags">
                         <span class="tag">MySQL</span>
                         <span class="tag">SQLite</span>
+                        <span class="tag">Polars</span>
                         <span class="tag">业务指标体系</span>
                     </div>
                 </div>
@@ -283,33 +181,17 @@
     <!-- 项目经历 / Projects Section -->
     <section id="projects" class="projects">
         <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon">📊</span>
-                项目经历
-            </h2>
+            <h2 class="section-title">项目经历</h2>
             <p class="section-subtitle">以下是我在 GitHub 上的 8 个项目，涵盖数据分析、机器学习和全栈开发</p>
-            
-            <!-- 项目筛选器 / Project Filter -->
-            <div class="project-filter">
-                <button class="filter-btn active" data-filter="all">全部</button>
-                <button class="filter-btn" data-filter="ml">机器学习</button>
-                <button class="filter-btn" data-filter="analysis">数据分析</button>
-                <button class="filter-btn" data-filter="web">Web 开发</button>
-            </div>
             
             <div class="projects-grid">
                 <!-- Project 1 -->
-                <div class="project-card" data-category="web">
-                    <div class="project-badge">Web</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-shopping-cart"></i>
                     </div>
                     <h3>KXO205 电商网站</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">HTML</span>
-                        <span class="tech-tag">CSS</span>
-                        <span class="tech-tag">JavaScript</span>
-                    </p>
+                    <p class="project-tech">HTML · CSS · JavaScript</p>
                     <p>完整的电子商务网站，包含产品展示、购物车、用户登录注册功能，响应式设计支持多设备访问。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/kxo205-ecommerce-website" target="_blank" class="btn-link">
@@ -319,17 +201,12 @@
                 </div>
 
                 <!-- Project 2 -->
-                <div class="project-card" data-category="web">
-                    <div class="project-badge">Full Stack</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-utensils"></i>
                     </div>
                     <h3>食堂评分系统</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">FastAPI</span>
-                        <span class="tech-tag">SQLite</span>
-                    </p>
+                    <p class="project-tech">Python · FastAPI · SQLite</p>
                     <p>全栈食堂菜品评分系统，支持菜品管理、评分评论、统计分析，RESTful API 设计。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/canteen-rating-app" target="_blank" class="btn-link">
@@ -339,18 +216,16 @@
                 </div>
 
                 <!-- Project 3 -->
-                <div class="project-card" data-category="analysis">
-                    <div class="project-badge">Analysis</div>
+                <div class="project-card featured">
                     <div class="project-icon">
                         <i class="fas fa-chart-scatter"></i>
                     </div>
                     <h3>芝加哥犯罪数据分析</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">Pandas</span>
-                        <span class="tech-tag">Seaborn</span>
+                    <p class="project-tech">Python · Pandas · Seaborn</p>
+                    <p>
+                        基于 92,598 条犯罪记录，完成数据清洗、特征工程和多维可视化，帮助识别
+                        <strong>高风险时间段与区域模式</strong>，为城市治安策略提供量化参考。
                     </p>
-                    <p>对 92,598 起犯罪事件进行探索性数据分析，包含时间序列分析、地理分布可视化等 12+ 可视化图表。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc5002-crime-analysis" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -359,17 +234,12 @@
                 </div>
 
                 <!-- Project 4 -->
-                <div class="project-card" data-category="ml">
-                    <div class="project-badge">Big Data</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-project-diagram"></i>
                     </div>
                     <h3>MapReduce 矩阵乘法</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">Hadoop</span>
-                        <span class="tech-tag">MapReduce</span>
-                    </p>
+                    <p class="project-tech">Python · Hadoop · MapReduce</p>
                     <p>使用 MapReduce 编程模型实现矩阵乘法，适用于大规模分布式计算场景。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc5002-mapreduce-matrix" target="_blank" class="btn-link">
@@ -379,17 +249,12 @@
                 </div>
 
                 <!-- Project 5 -->
-                <div class="project-card" data-category="analysis">
-                    <div class="project-badge">Visualization</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-trash-alt"></i>
                     </div>
                     <h3>意大利垃圾管理分析</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">Jupyter</span>
-                        <span class="tech-tag">Matplotlib</span>
-                    </p>
+                    <p class="project-tech">Python · Jupyter · Matplotlib</p>
                     <p>分析意大利 4,341 个市镇的垃圾管理费用数据，包含 PAYT 政策影响评估和区域差异分析。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/italy-waste-visualization" target="_blank" class="btn-link">
@@ -399,17 +264,12 @@
                 </div>
 
                 <!-- Project 6 -->
-                <div class="project-card" data-category="ml">
-                    <div class="project-badge">ML</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-cloud-sun-rain"></i>
                     </div>
                     <h3>气候韧性机器学习</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">Scikit-Learn</span>
-                        <span class="tech-tag">CatBoost</span>
-                    </p>
+                    <p class="project-tech">Python · Scikit-Learn · CatBoost</p>
                     <p>使用 Ridge、Lasso、Random Forest、Gradient Boosting 四种模型分析气候韧性影响因素。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc6004-climate-resilience" target="_blank" class="btn-link">
@@ -419,18 +279,13 @@
                 </div>
 
                 <!-- Project 7 -->
-                <div class="project-card featured" data-category="ml">
-                    <div class="project-badge featured-badge">Team Project</div>
+                <div class="project-card featured">
                     <div class="project-icon">
                         <i class="fas fa-users"></i>
                     </div>
+                    <div class="featured-badge">小组项目</div>
                     <h3>SDSC8009 气候分析</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Python</span>
-                        <span class="tech-tag">ML</span>
-                        <span class="tech-tag">Report</span>
-                        <span class="tech-tag">PPT</span>
-                    </p>
+                    <p class="project-tech">Python · ML · Report · PPT</p>
                     <p>SDSC8009 小组项目，包含完整机器学习流程、最终报告和演示文稿，4 种模型对比分析。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc8009-climate-ml-project" target="_blank" class="btn-link">
@@ -440,17 +295,12 @@
                 </div>
 
                 <!-- Project 8 -->
-                <div class="project-card" data-category="ml">
-                    <div class="project-badge">Individual</div>
+                <div class="project-card">
                     <div class="project-icon">
                         <i class="fas fa-brain"></i>
                     </div>
                     <h3>个性类型预测</h3>
-                    <p class="project-tech">
-                        <span class="tech-tag">Polars</span>
-                        <span class="tech-tag">Lets-Plot</span>
-                        <span class="tech-tag">CatBoost</span>
-                    </p>
+                    <p class="project-tech">Polars · Lets-Plot · CatBoost</p>
                     <p>SDSC8009 个人作业，使用 CatBoost 预测内向/外向个性类型，严格遵循 Polars 和 Lets-Plot 要求。</p>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/personality-analysis" target="_blank" class="btn-link">
@@ -473,10 +323,7 @@
     <!-- 简历 / Resume Section -->
     <section id="resume" class="resume">
         <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon">📄</span>
-                简历
-            </h2>
+            <h2 class="section-title">简历</h2>
             <div class="resume-content">
                 <div class="resume-preview">
                     <h3>唐翊杰 - 个人简历</h3>
@@ -517,36 +364,25 @@
     <!-- 联系方式 / Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title">
-                <span class="title-icon">📞</span>
-                联系方式
-            </h2>
+            <h2 class="section-title">联系方式</h2>
             <div class="contact-grid">
                 <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-phone"></i>
-                    </div>
+                    <i class="fas fa-phone"></i>
                     <h3>电话</h3>
                     <p><a href="tel:18692677391">186-9267-7391</a></p>
                 </div>
                 <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
+                    <i class="fas fa-envelope"></i>
                     <h3>邮箱</h3>
                     <p><a href="mailto:72540564@cityu-dg.edu.cn">72540564@cityu-dg.edu.cn</a></p>
                 </div>
                 <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fab fa-github"></i>
-                    </div>
+                    <i class="fab fa-github"></i>
                     <h3>GitHub</h3>
                     <p><a href="https://github.com/Moshenluo" target="_blank">github.com/Moshenluo</a></p>
                 </div>
                 <div class="contact-card">
-                    <div class="contact-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
+                    <i class="fas fa-map-marker-alt"></i>
                     <h3>所在地</h3>
                     <p>广东东莞 · 可接受异地</p>
                 </div>
@@ -557,21 +393,16 @@
     <!-- 页脚 / Footer -->
     <footer class="footer">
         <div class="container">
-            <div class="footer-content">
-                <div class="footer-text">
-                    <p>&copy; 2026 唐翊杰。All Rights Reserved.</p>
-                    <p>Built with <i class="fas fa-heart"></i> for Data Science</p>
-                </div>
-                <div class="footer-links">
-                    <a href="https://github.com/Moshenluo" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="mailto:72540564@cityu-dg.edu.cn"><i class="fas fa-envelope"></i></a>
-                </div>
-            </div>
+            <p>&copy; 2026 唐翊杰。All Rights Reserved.</p>
+            <p>Built with ❤️ for Data Science</p>
         </div>
     </footer>
 
-    <!-- 粒子库 / Particles.js Library -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- 返回顶部按钮 / Back To Top Button -->
+    <button id="backToTop" aria-label="返回顶部">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script src="js/script.js"></script>
 </body>
 </html>
