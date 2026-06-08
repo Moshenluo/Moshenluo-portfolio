@@ -1,6 +1,6 @@
 /* ============================================================
-   唐翊杰 | Portfolio Script
-   科幻粒子 · 故障动画 · 滚动交互
+   唐翊杰 | Portfolio Script v3
+   终端打字 · 鼠标光晕 · 项目筛选 · 卡片展开 · 粒子背景
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initBackToTop();
   initGlitchOnHover();
+  initMouseGlow();
+  initTerminalTyping();
+  initProjectFilters();
 });
 
 /* ============================================================
@@ -37,7 +40,6 @@ function initParticles() {
     constructor() {
       this.reset();
     }
-
     reset() {
       this.x = Math.random() * w;
       this.y = Math.random() * h;
@@ -46,31 +48,23 @@ function initParticles() {
       this.speedY = (Math.random() - 0.5) * 0.6;
       this.opacity = Math.random() * 0.5 + 0.1;
       this.fadeSpeed = (Math.random() - 0.5) * 0.008;
-      this.hue = Math.random() > 0.5 ? 190 : 275; // cyan or purple
+      this.hue = Math.random() > 0.5 ? 190 : 275;
     }
-
     update() {
       this.x += this.speedX;
       this.y += this.speedY;
       this.opacity += this.fadeSpeed;
-
-      if (this.opacity <= 0.05 || this.opacity >= 0.6) {
-        this.fadeSpeed *= -1;
-      }
-
+      if (this.opacity <= 0.05 || this.opacity >= 0.6) this.fadeSpeed *= -1;
       if (this.x < -10) this.x = w + 10;
       if (this.x > w + 10) this.x = -10;
       if (this.y < -10) this.y = h + 10;
       if (this.y > h + 10) this.y = -10;
     }
-
     draw(ctx) {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
       ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity})`;
       ctx.fill();
-
-      // 微光晕
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
       ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity * 0.15})`;
@@ -78,20 +72,15 @@ function initParticles() {
     }
   }
 
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    particles.push(new Particle());
-  }
+  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
 
   function animate() {
     ctx.clearRect(0, 0, w, h);
-
-    // 绘制连线（近距粒子之间）
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
         if (dist < 100) {
           ctx.beginPath();
           ctx.moveTo(particles[i].x, particles[i].y);
@@ -102,16 +91,149 @@ function initParticles() {
         }
       }
     }
-
-    particles.forEach(p => {
-      p.update();
-      p.draw(ctx);
-    });
-
+    particles.forEach(p => { p.update(); p.draw(ctx); });
     requestAnimationFrame(animate);
   }
-
   animate();
+}
+
+/* ============================================================
+   终端打字动画
+   ============================================================ */
+function initTerminalTyping() {
+  const terminal = document.getElementById('terminal-output');
+  const reveal = document.getElementById('hero-reveal');
+  if (!terminal || !reveal) return;
+
+  const lines = [
+    { prompt: 'visitor@portfolio:~$', cmd: ' whoami', output: '<span class="output-line">唐翊杰</span>', delay: 400 },
+    { prompt: 'visitor@portfolio:~$', cmd: ' cat role.txt', output: '<span class="output-sub">AI Native Product Builder  |  数据科学硕士  |  香港城市大学（东莞）</span>', delay: 500 },
+    { prompt: 'visitor@portfolio:~$', cmd: ' systemctl status', output: '<span class="output-sub">● active ✓ 4+ AI产品项目  ✓ 3段实习  ✓ 0→1全流程</span>', delay: 500 },
+  ];
+
+  let currentLine = 0;
+
+  function typeLine(lineData) {
+    // Create line element
+    const wrapper = document.createElement('div');
+    wrapper.className = 'terminal-line';
+    terminal.appendChild(wrapper);
+
+    // Show prompt
+    const promptSpan = document.createElement('span');
+    promptSpan.className = 'prompt';
+    promptSpan.textContent = lineData.prompt;
+    wrapper.appendChild(promptSpan);
+
+    // Type command
+    const cmdSpan = document.createElement('span');
+    cmdSpan.className = 'cmd';
+    wrapper.appendChild(cmdSpan);
+
+    const cmdText = lineData.cmd;
+    let charIdx = 0;
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor-blink';
+    wrapper.appendChild(cursor);
+
+    wrapper.classList.add('visible');
+
+    function typeChar() {
+      if (charIdx < cmdText.length) {
+        cmdSpan.textContent += cmdText[charIdx];
+        charIdx++;
+        setTimeout(typeChar, 50 + Math.random() * 40);
+      } else {
+        // Done typing command, show output after a beat
+        cursor.remove();
+        setTimeout(() => {
+          const outputLine = document.createElement('div');
+          outputLine.className = 'terminal-line visible';
+          outputLine.innerHTML = '&nbsp;&nbsp;' + lineData.output;
+          terminal.appendChild(outputLine);
+
+          currentLine++;
+          if (currentLine < lines.length) {
+            setTimeout(() => typeLine(lines[currentLine]), 200);
+          } else {
+            // All done, fade in hero reveal
+            setTimeout(() => {
+              reveal.classList.add('show');
+            }, 300);
+          }
+        }, 250);
+      }
+    }
+
+    setTimeout(typeChar, 200);
+  }
+
+  // Start typing
+  setTimeout(() => typeLine(lines[0]), 600);
+}
+
+/* ============================================================
+   鼠标光晕
+   ============================================================ */
+function initMouseGlow() {
+  const glow = document.getElementById('mouse-glow');
+  if (!glow) return;
+
+  let mouseX = -999, mouseY = -999;
+  let targetX = -999, targetY = -999;
+
+  document.addEventListener('mousemove', (e) => {
+    targetX = e.clientX;
+    targetY = e.clientY;
+    glow.style.opacity = '1';
+  });
+
+  document.addEventListener('mouseleave', () => {
+    glow.style.opacity = '0';
+  });
+
+  document.addEventListener('mouseenter', () => {
+    glow.style.opacity = '1';
+  });
+
+  // Smooth follow with requestAnimationFrame
+  function smoothFollow() {
+    mouseX += (targetX - mouseX) * 0.08;
+    mouseY += (targetY - mouseY) * 0.08;
+    glow.style.left = mouseX + 'px';
+    glow.style.top = mouseY + 'px';
+    requestAnimationFrame(smoothFollow);
+  }
+
+  smoothFollow();
+}
+
+/* ============================================================
+   项目筛选 Tab
+   ============================================================ */
+function initProjectFilters() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card[data-category]');
+
+  if (!filterBtns.length || !projectCards.length) return;
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      projectCards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.classList.remove('filter-hide');
+        } else {
+          card.classList.add('filter-hide');
+        }
+      });
+    });
+  });
 }
 
 /* ============================================================
@@ -121,14 +243,12 @@ function initMobileNav() {
   const burger = document.querySelector('.burger');
   const nav = document.querySelector('.nav-links');
   const navLinks = document.querySelectorAll('.nav-links li');
-
   if (!burger || !nav) return;
 
   burger.addEventListener('click', () => {
     nav.classList.toggle('active');
     burger.classList.toggle('toggle');
   });
-
   navLinks.forEach(link => {
     link.addEventListener('click', () => {
       nav.classList.remove('active');
@@ -145,15 +265,13 @@ function initSmoothScroll() {
     anchor.addEventListener('click', function (e) {
       e.preventDefault();
       const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 }
 
 /* ============================================================
-   滚动监听 — 导航高亮 + 导航栏效果 + 返回顶部
+   滚动监听 — 导航高亮 + 导航栏效果
    ============================================================ */
 function initScrollSpy() {
   const navbar = document.querySelector('.navbar');
@@ -161,27 +279,17 @@ function initScrollSpy() {
   const navItems = document.querySelectorAll('.nav-links a');
 
   window.addEventListener('scroll', () => {
-    // 导航阴影
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+    if (window.scrollY > 50) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
 
-    // 当前区域高亮
     let currentId = '';
     sections.forEach(section => {
       const rect = section.getBoundingClientRect();
-      if (rect.top <= 100 && rect.bottom >= 100) {
-        currentId = section.id;
-      }
+      if (rect.top <= 100 && rect.bottom >= 100) currentId = section.id;
     });
-
     navItems.forEach(link => {
       link.classList.remove('active');
-      if (link.getAttribute('href') === `#${currentId}`) {
-        link.classList.add('active');
-      }
+      if (link.getAttribute('href') === `#${currentId}`) link.classList.add('active');
     });
   });
 }
@@ -190,11 +298,7 @@ function initScrollSpy() {
    滚动渐入动画
    ============================================================ */
 function initScrollReveal() {
-  const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -60px 0px',
-  };
-
+  const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -60px 0px' };
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -218,27 +322,21 @@ function initScrollReveal() {
 function initBackToTop() {
   const btn = document.getElementById('backToTop');
   if (!btn) return;
-
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) {
-      btn.classList.add('visible');
-    } else {
-      btn.classList.remove('visible');
-    }
+    if (window.scrollY > 500) btn.classList.add('visible');
+    else btn.classList.remove('visible');
   });
-
   btn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 }
 
 /* ============================================================
-   故障文字效果 — 名字悬停触发
+   故障文字效果 — 名字悬停触发（保留兼容）
    ============================================================ */
 function initGlitchOnHover() {
   const nameEl = document.querySelector('.hero-text h1');
   if (!nameEl) return;
-
   const originalText = nameEl.textContent;
   let glitchTimer = null;
 
@@ -250,7 +348,6 @@ function initGlitchOnHover() {
         nameEl.textContent = originalText;
         return;
       }
-      // 随机替换部分字符
       const chars = originalText.split('');
       const idx = Math.floor(Math.random() * chars.length);
       const glitchChars = '!@#$%^&*<>?/\\|{}[]';
