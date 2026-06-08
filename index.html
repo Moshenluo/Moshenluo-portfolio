@@ -12,6 +12,19 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- ═══════════════════════════════════════════
+         开场动画覆盖层 — 矩阵雨 + 粒子汇聚 + 爆炸
+         ═══════════════════════════════════════════ -->
+    <div id="intro-overlay">
+        <canvas id="matrix-canvas"></canvas>
+        <canvas id="particle-canvas"></canvas>
+        <div id="intro-text-container">
+            <div id="intro-name" class="intro-name-hidden">唐翊杰</div>
+            <div id="intro-role" class="intro-role-hidden">AI Native Product Builder</div>
+        </div>
+        <div id="intro-explosion"></div>
+    </div>
+
     <!-- 鼠标光晕 -->
     <div id="mouse-glow"></div>
     <!-- 导航栏 / Navigation -->
@@ -41,8 +54,12 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <!-- 纯文字展示 -->
-                    <div id="terminal-output" class="terminal-hero hero-text-plain"></div>
+                    <!-- CRT 显示器外壳 + 纯文字 -->
+                    <div class="crt-frame" id="crt-container">
+                        <div class="crt-scanline"></div>
+                        <div class="crt-glow"></div>
+                        <div id="terminal-output" class="terminal-hero"></div>
+                    </div>
                     <!-- 后续内容（打字完成后渐入） -->
                     <div id="hero-reveal" class="hero-reveal" style="opacity:0;">
                         <p class="tagline">
