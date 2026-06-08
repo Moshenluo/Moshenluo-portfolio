@@ -885,6 +885,10 @@ body::after {
 /* ═══════════════════════════════════════════════════════
    CRT 显示器外壳 — 纯文字展示用
    ═══════════════════════════════════════════════════════ */
+#crt-container {
+  opacity: 0;                     /* 初始隐藏，JS 控制浮现 */
+  transition: opacity 0.6s ease;
+}
 .crt-frame {
   position: relative;
   border-radius: var(--radius-md);
