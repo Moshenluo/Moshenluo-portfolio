@@ -164,48 +164,43 @@ body::after {
   font-family: var(--font-mono); font-size: 1.05rem; font-weight: 500;
   color: var(--text-secondary); letter-spacing: 2px; margin-bottom: 0.5rem;
 }
-.hero-text h2::before { content: '$ '; color: var(--cyan); }
 
-/* --- 终端打字 Hero --- */
+
+/* --- 纯文字 Hero --- */
 .hero { padding: 180px 0 110px; }
 .terminal-hero {
-  font-family: var(--font-mono);
-  font-size: 1.15rem;
-  line-height: 2;
-  color: var(--text-secondary);
-  margin-bottom: 1rem;
-  text-align: left;
-  max-width: 640px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  max-width: 720px;
   margin-left: auto; margin-right: auto;
-  padding: 1.5rem 2rem;
-  background: rgba(3, 3, 10, 0.88);
-  border: 2px solid rgba(0, 240, 255, 0.18);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.03), var(--shadow-card);
-  min-height: 200px;
+  min-height: 160px;
 }
-.terminal-line { display: flex; gap: 0.5rem; opacity: 0; transition: opacity 0.15s; }
-.terminal-line.visible { opacity: 1; }
-.terminal-line .prompt { color: var(--cyan); white-space: nowrap; font-weight: 600; }
-.terminal-line .cmd { color: var(--text-primary); }
-.terminal-line .output-line {
-  display: block; color: var(--text-primary);
-  font-size: 1.4rem; font-weight: 800;
+.hero-line {
+  margin-bottom: 0.75rem;
+}
+.hero-name {
+  font-family: var(--font-sans);
+  font-size: clamp(3rem, 7vw, 5rem);
+  font-weight: 800;
+  margin: 0;
   background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.4));
+  filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.3));
+  letter-spacing: -1px;
 }
-.terminal-line .output-sub {
-  display: block; color: var(--text-secondary); font-size: 0.95rem;
+.hero-role {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0.5rem 0;
+  letter-spacing: 0.5px;
 }
-.cursor-blink {
-  display: inline-block; width: 10px; height: 1.3em;
-  background: var(--cyan); vertical-align: text-bottom;
-  animation: blink 0.8s step-end infinite;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+.hero-status {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  margin: 0;
 }
-@keyframes blink { 50% { opacity: 0; } }
 
 /* Hero 后续内容渐入 */
 .hero-reveal {
@@ -677,65 +672,6 @@ body::after {
   transform: translate(-50%, -50%);
   transition: opacity 0.4s;
   opacity: 0;
-}
-
-/* ============================================================
-   CRT 终端显示器效果
-   ============================================================ */
-.crt-frame {
-  position: relative;
-  border-radius: var(--radius-md);
-  padding: 3px;
-  background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(180, 0, 255, 0.15));
-  box-shadow:
-    0 0 0 1px rgba(0, 240, 255, 0.1),
-    0 0 40px rgba(0, 240, 255, 0.08),
-    0 0 80px rgba(180, 0, 255, 0.05),
-    inset 0 0 60px rgba(0, 240, 255, 0.02);
-  animation: crtPulse 4s ease-in-out infinite;
-}
-@keyframes crtPulse {
-  0%, 100% { box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.1), 0 0 40px rgba(0, 240, 255, 0.08), 0 0 80px rgba(180, 0, 255, 0.05), inset 0 0 60px rgba(0, 240, 255, 0.02); }
-  50% { box-shadow: 0 0 0 1px rgba(0, 240, 255, 0.2), 0 0 60px rgba(0, 240, 255, 0.15), 0 0 120px rgba(180, 0, 255, 0.1), inset 0 0 80px rgba(0, 240, 255, 0.04); }
-}
-
-.crt-scanline {
-  position: absolute; inset: 3px; z-index: 2; pointer-events: none;
-  border-radius: calc(var(--radius-md) - 3px);
-  background: repeating-linear-gradient(
-    0deg,
-    rgba(0, 0, 0, 0.08) 0px,
-    rgba(0, 0, 0, 0.08) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  opacity: 0.4;
-}
-.crt-scanline::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(0, 240, 255, 0.03) 0%,
-    transparent 50%,
-    rgba(180, 0, 255, 0.03) 100%
-  );
-  animation: scanMove 6s linear infinite;
-}
-@keyframes scanMove {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-.crt-glow {
-  position: absolute; inset: 3px; z-index: 1; pointer-events: none;
-  border-radius: calc(var(--radius-md) - 3px);
-  box-shadow: inset 0 0 40px rgba(0, 240, 255, 0.06);
-}
-
-/* 终端打字故障闪烁 */
-.terminal-hero .glitch-char {
-  color: var(--magenta);
-  text-shadow: 0 0 10px var(--magenta), 0 0 20px var(--magenta);
 }
 
 /* ============================================================
