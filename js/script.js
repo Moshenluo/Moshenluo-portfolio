@@ -98,12 +98,14 @@ function initParticles() {
 }
 
 /* ============================================================
-   终端打字动画
+   终端打字动画 — 故障闪烁增强版
    ============================================================ */
 function initTerminalTyping() {
   const terminal = document.getElementById('terminal-output');
   const reveal = document.getElementById('hero-reveal');
   if (!terminal || !reveal) return;
+
+  const glitchChars = '!@#$%^&*<>?/\\|{}[]~`+=;:';
 
   const lines = [
     { prompt: 'visitor@portfolio:~$', cmd: ' whoami', output: '<span class="output-line">唐翊杰</span>', delay: 400 },
@@ -113,19 +115,38 @@ function initTerminalTyping() {
 
   let currentLine = 0;
 
+  function glitchText(element, originalText, duration = 400) {
+    const chars = originalText.split('');
+    const steps = 8;
+    let step = 0;
+    const interval = setInterval(() => {
+      if (step >= steps) {
+        clearInterval(interval);
+        element.textContent = originalText;
+        element.style.textShadow = '';
+        return;
+      }
+      const scrambled = chars.map((c, i) => {
+        if (c === ' ') return ' ';
+        if (Math.random() > 0.5) return glitchChars[Math.floor(Math.random() * glitchChars.length)];
+        return c;
+      }).join('');
+      element.textContent = scrambled;
+      element.style.textShadow = '0 0 10px var(--magenta), 0 0 20px var(--cyan)';
+      step++;
+    }, duration / steps);
+  }
+
   function typeLine(lineData) {
-    // Create line element
     const wrapper = document.createElement('div');
     wrapper.className = 'terminal-line';
     terminal.appendChild(wrapper);
 
-    // Show prompt
     const promptSpan = document.createElement('span');
     promptSpan.className = 'prompt';
     promptSpan.textContent = lineData.prompt;
     wrapper.appendChild(promptSpan);
 
-    // Type command
     const cmdSpan = document.createElement('span');
     cmdSpan.className = 'cmd';
     wrapper.appendChild(cmdSpan);
@@ -140,36 +161,62 @@ function initTerminalTyping() {
 
     function typeChar() {
       if (charIdx < cmdText.length) {
+        // Random glitch effect during typing
+        if (Math.random() < 0.08 && charIdx > 2) {
+          const glitch = document.createElement('span');
+          glitch.className = 'glitch-char';
+          glitch.textContent = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+          cmdSpan.appendChild(glitch);
+          setTimeout(() => glitch.remove(), 80 + Math.random() * 60);
+        }
         cmdSpan.textContent += cmdText[charIdx];
         charIdx++;
-        setTimeout(typeChar, 50 + Math.random() * 40);
+        setTimeout(typeChar, 45 + Math.random() * 50);
       } else {
-        // Done typing command, show output after a beat
         cursor.remove();
         setTimeout(() => {
+          // Flash the command line before output
+          wrapper.style.textShadow = '0 0 15px var(--cyan)';
+          setTimeout(() => { wrapper.style.textShadow = ''; }, 150);
+
           const outputLine = document.createElement('div');
           outputLine.className = 'terminal-line visible';
           outputLine.innerHTML = '&nbsp;&nbsp;' + lineData.output;
+          outputLine.style.opacity = '0';
           terminal.appendChild(outputLine);
+
+          // Fade in output with glitch
+          let op = 0;
+          const fadeIn = setInterval(() => {
+            op += 0.15;
+            outputLine.style.opacity = op;
+            if (op >= 1) {
+              clearInterval(fadeIn);
+              outputLine.style.opacity = '1';
+            }
+          }, 40);
 
           currentLine++;
           if (currentLine < lines.length) {
-            setTimeout(() => typeLine(lines[currentLine]), 200);
+            setTimeout(() => typeLine(lines[currentLine]), 300);
           } else {
-            // All done, fade in hero reveal
+            // Final glitch on the whole terminal before reveal
             setTimeout(() => {
-              reveal.classList.add('show');
-            }, 300);
+              terminal.style.boxShadow = 'inset 0 0 60px rgba(0, 240, 255, 0.08), 0 0 40px rgba(0, 240, 255, 0.1)';
+              setTimeout(() => {
+                terminal.style.boxShadow = '';
+                reveal.classList.add('show');
+              }, 300);
+            }, 400);
           }
-        }, 250);
+        }, 280);
       }
     }
 
-    setTimeout(typeChar, 200);
+    setTimeout(typeChar, 250);
   }
 
-  // Start typing
-  setTimeout(() => typeLine(lines[0]), 600);
+  setTimeout(() => typeLine(lines[0]), 800);
 }
 
 /* ============================================================
