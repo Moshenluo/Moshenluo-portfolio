@@ -41,8 +41,12 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <!-- 终端打字动画 -->
-                    <div id="terminal-output" class="terminal-hero"></div>
+                    <!-- 终端打字动画 — CRT 显示器风格 -->
+                    <div class="crt-frame">
+                        <div class="crt-scanline"></div>
+                        <div class="crt-glow"></div>
+                        <div id="terminal-output" class="terminal-hero"></div>
+                    </div>
                     <!-- 后续内容（打字完成后渐入） -->
                     <div id="hero-reveal" class="hero-reveal" style="opacity:0;">
                         <p class="tagline">
@@ -130,7 +134,7 @@
             <h2 class="section-title">专业能力</h2>
             <div class="skills-grid">
                 <div class="skill-card">
-                    <i class="fas fa-lightbulb"></i>
+                    <div class="icon-wrapper"><i class="fas fa-lightbulb"></i></div>
                     <h3>AI 产品能力</h3>
                     <div class="skill-tags">
                         <span class="tag">需求分析</span>
@@ -142,7 +146,7 @@
                     </div>
                 </div>
                 <div class="skill-card">
-                    <i class="fas fa-robot"></i>
+                    <div class="icon-wrapper"><i class="fas fa-robot"></i></div>
                     <h3>AI 技术栈</h3>
                     <div class="skill-tags">
                         <span class="tag">LLM</span>
@@ -154,7 +158,7 @@
                     </div>
                 </div>
                 <div class="skill-card">
-                    <i class="fas fa-code"></i>
+                    <div class="icon-wrapper"><i class="fas fa-code"></i></div>
                     <h3>开发框架</h3>
                     <div class="skill-tags">
                         <span class="tag">Python</span>
@@ -166,7 +170,7 @@
                     </div>
                 </div>
                 <div class="skill-card">
-                    <i class="fas fa-chart-line"></i>
+                    <div class="icon-wrapper"><i class="fas fa-chart-line"></i></div>
                     <h3>数据分析</h3>
                     <div class="skill-tags">
                         <span class="tag">Pandas</span>
@@ -178,7 +182,7 @@
                     </div>
                 </div>
                 <div class="skill-card">
-                    <i class="fas fa-pencil-ruler"></i>
+                    <div class="icon-wrapper"><i class="fas fa-pencil-ruler"></i></div>
                     <h3>产品设计工具</h3>
                     <div class="skill-tags">
                         <span class="tag">Figma</span>
@@ -189,7 +193,7 @@
                     </div>
                 </div>
                 <div class="skill-card">
-                    <i class="fas fa-brain"></i>
+                    <div class="icon-wrapper"><i class="fas fa-brain"></i></div>
                     <h3>机器学习</h3>
                     <div class="skill-tags">
                         <span class="tag">Scikit-learn</span>
@@ -220,7 +224,7 @@
             <div class="projects-grid">
                 <!-- Project 1: Offer捕手 -->
                 <div class="project-card featured" data-category="ai-product">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-bullseye"></i>
                     </div>
                     <div class="featured-badge">⭐ AI 产品</div>
@@ -244,7 +248,7 @@
 
                 <!-- Project 2: IdeaLab -->
                 <div class="project-card featured" data-category="ai-product">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-flask"></i>
                     </div>
                     <div class="featured-badge">⭐ AI 产品</div>
@@ -268,7 +272,7 @@
 
                 <!-- Project 3: 黑客松 -->
                 <div class="project-card featured" data-category="ai-product">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-gamepad"></i>
                     </div>
                     <div class="featured-badge">🏆 黑客松获奖</div>
@@ -289,7 +293,7 @@
 
                 <!-- Project 4: novel-graph -->
                 <div class="project-card featured" data-category="ai-product">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-film"></i>
                     </div>
                     <div class="featured-badge">⭐ AI 产品</div>
@@ -313,7 +317,7 @@
 
                 <!-- Project 5: 建筑图像评估 -->
                 <div class="project-card" data-category="ml">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-image"></i>
                     </div>
                     <div class="featured-badge">CV 算法</div>
@@ -334,7 +338,7 @@
 
                 <!-- Project 6: 气候预测 -->
                 <div class="project-card" data-category="ml">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-cloud-sun-rain"></i>
                     </div>
                     <div class="featured-badge">机器学习</div>
@@ -355,7 +359,7 @@
 
                 <!-- Project 7: 犯罪分析 -->
                 <div class="project-card" data-category="data">
-                    <div class="project-icon">
+                    <div class="project-icon icon-3d">
                         <i class="fas fa-chart-bar"></i>
                     </div>
                     <div class="featured-badge">数据分析</div>
@@ -369,6 +373,70 @@
                     </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc5002-crime-analysis" target="_blank" class="btn-link">
+                            <i class="fab fa-github"></i> 查看代码
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Project 8: A股量化回测 -->
+                <div class="project-card" data-category="data">
+                    <div class="project-icon icon-3d">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="featured-badge">量化交易</div>
+                    <h3>A股趋势跟踪量化回测系统</h3>
+                    <p class="project-tech">Python · Backtrader · Pandas · Tushare</p>
+                    <p>基于趋势跟踪策略的 A 股量化回测框架，支持多因子选股、动态仓位管理与止损止盈规则。回测年化收益率跑赢沪深 300 基准，输出完整交易信号与绩效归因报告。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>核心策略：</strong>MA交叉+动量过滤+ATR止损 | <strong>回测框架：</strong>Backtrader | <strong>数据源：</strong>Tushare
+                        </div>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Moshenluo" target="_blank" class="btn-link">
+                            <i class="fab fa-github"></i> 查看代码
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 9: CV目标检测 -->
+                <div class="project-card" data-category="ml">
+                    <div class="project-icon icon-3d">
+                        <i class="fas fa-crosshairs"></i>
+                    </div>
+                    <div class="featured-badge">CV 算法</div>
+                    <h3>工业缺陷目标检测与标注系统</h3>
+                    <p class="project-tech">YOLOv8 · OpenCV · PyTorch · Label Studio</p>
+                    <p>基于 YOLOv8 的工业表面缺陷检测系统，包含数据清洗、半自动标注流水线、模型训练与推理部署。支持 mAP@0.5 达 0.87 的实时检测，为蜂视科技质检环节提供算法原型。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>检测模型：</strong>YOLOv8n/s 多尺度 | <strong>mAP@0.5：</strong>0.87 | <strong>标注工具：</strong>Label Studio 集成
+                        </div>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Moshenluo" target="_blank" class="btn-link">
+                            <i class="fab fa-github"></i> 查看代码
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Project 10: 电商RFM分析 -->
+                <div class="project-card" data-category="data">
+                    <div class="project-icon icon-3d">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="featured-badge">数据分析</div>
+                    <h3>电商用户 RFM 分析与复购预测</h3>
+                    <p class="project-tech">Python · Pandas · Scikit-learn · Streamlit</p>
+                    <p>基于真实电商订单数据的用户分层分析：RFM 模型聚类识别高价值/流失风险用户，结合 XGBoost 构建复购预测模型。输出交互式看板，支持运营策略 A/B 测试效果追踪。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>分析方法：</strong>RFM聚类 + XGBoost预测 | <strong>可视化：</strong>Streamlit交互看板 | <strong>应用：</strong>运营策略指导
+                        </div>
+                    </div>
+                    <div class="project-links">
+                        <a href="https://github.com/Moshenluo" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
                         </a>
                     </div>
