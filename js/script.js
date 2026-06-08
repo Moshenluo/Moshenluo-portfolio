@@ -1,161 +1,270 @@
-// 移动端导航 / Mobile Navigation
-const burger = document.querySelector('.burger');
-const nav = document.querySelector('.nav-links');
-const navLinks = document.querySelectorAll('.nav-links li');
+/* ============================================================
+   唐翊杰 | Portfolio Script
+   科幻粒子 · 故障动画 · 滚动交互
+   ============================================================ */
 
-burger.addEventListener('click', () => {
-    // 切换导航 / Toggle Nav
-    nav.classList.toggle('active');
-
-    // 汉堡菜单动画 / Burger Animation
-    burger.classList.toggle('toggle');
-
-    // 链接动画 / Link Animation
-    navLinks.forEach((link, index) => {
-        if (link.style.animation) {
-            link.style.animation = '';
-        } else {
-            link.style.animation = `navLinkFade 0.5s ease forwards ${index / 7 + 0.3}s`;
-        }
-    });
+document.addEventListener('DOMContentLoaded', () => {
+  initParticles();
+  initMobileNav();
+  initSmoothScroll();
+  initScrollSpy();
+  initScrollReveal();
+  initBackToTop();
+  initGlitchOnHover();
 });
 
-// 点击链接关闭导航 / Close nav when clicking on link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        nav.classList.remove('active');
-        burger.classList.remove('toggle');
-    });
-});
+/* ============================================================
+   粒子背景 — 赛博数据流
+   ============================================================ */
+function initParticles() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'particles-canvas';
+  document.body.prepend(canvas);
 
-// 平滑滚动 / Smooth Scrolling
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  const particles = [];
+  const PARTICLE_COUNT = 80;
 
-// 滚动时导航栏阴影 + 当前激活菜单 + 返回顶部按钮
-const navbar = document.querySelector('.navbar');
-const sections = document.querySelectorAll('section[id]');
-const navItems = document.querySelectorAll('.nav-links a');
-const backToTopBtn = document.getElementById('backToTop');
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
 
-window.addEventListener('scroll', () => {
-    // 阴影 + 玻璃效果
-    if (window.scrollY > 50) {
-        navbar.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-        navbar.classList.remove('scrolled');
+  class Particle {
+    constructor() {
+      this.reset();
     }
 
-    // 激活当前菜单
+    reset() {
+      this.x = Math.random() * w;
+      this.y = Math.random() * h;
+      this.size = Math.random() * 2 + 0.5;
+      this.speedX = (Math.random() - 0.5) * 0.6;
+      this.speedY = (Math.random() - 0.5) * 0.6;
+      this.opacity = Math.random() * 0.5 + 0.1;
+      this.fadeSpeed = (Math.random() - 0.5) * 0.008;
+      this.hue = Math.random() > 0.5 ? 190 : 275; // cyan or purple
+    }
+
+    update() {
+      this.x += this.speedX;
+      this.y += this.speedY;
+      this.opacity += this.fadeSpeed;
+
+      if (this.opacity <= 0.05 || this.opacity >= 0.6) {
+        this.fadeSpeed *= -1;
+      }
+
+      if (this.x < -10) this.x = w + 10;
+      if (this.x > w + 10) this.x = -10;
+      if (this.y < -10) this.y = h + 10;
+      if (this.y > h + 10) this.y = -10;
+    }
+
+    draw(ctx) {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity})`;
+      ctx.fill();
+
+      // 微光晕
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+      ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity * 0.15})`;
+      ctx.fill();
+    }
+  }
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push(new Particle());
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    // 绘制连线（近距粒子之间）
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 100) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(0, 240, 255, ${0.04 * (1 - dist / 100)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+    }
+
+    particles.forEach(p => {
+      p.update();
+      p.draw(ctx);
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+/* ============================================================
+   移动端导航
+   ============================================================ */
+function initMobileNav() {
+  const burger = document.querySelector('.burger');
+  const nav = document.querySelector('.nav-links');
+  const navLinks = document.querySelectorAll('.nav-links li');
+
+  if (!burger || !nav) return;
+
+  burger.addEventListener('click', () => {
+    nav.classList.toggle('active');
+    burger.classList.toggle('toggle');
+  });
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('active');
+      burger.classList.remove('toggle');
+    });
+  });
+}
+
+/* ============================================================
+   平滑滚动
+   ============================================================ */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+}
+
+/* ============================================================
+   滚动监听 — 导航高亮 + 导航栏效果 + 返回顶部
+   ============================================================ */
+function initScrollSpy() {
+  const navbar = document.querySelector('.navbar');
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    // 导航阴影
+    if (window.scrollY > 50) {
+      navbar.classList.add('scrolled');
+    } else {
+      navbar.classList.remove('scrolled');
+    }
+
+    // 当前区域高亮
     let currentId = '';
     sections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        if (rect.top <= 80 && rect.bottom >= 80) {
-            currentId = section.id;
-        }
+      const rect = section.getBoundingClientRect();
+      if (rect.top <= 100 && rect.bottom >= 100) {
+        currentId = section.id;
+      }
     });
 
     navItems.forEach(link => {
-        link.classList.remove('active');
-        const href = link.getAttribute('href');
-        if (href === `#${currentId}`) {
-            link.classList.add('active');
-        }
+      link.classList.remove('active');
+      if (link.getAttribute('href') === `#${currentId}`) {
+        link.classList.add('active');
+      }
     });
+  });
+}
 
-    // 返回顶部按钮显示控制
-    if (backToTopBtn) {
-        if (window.scrollY > 400) {
-            backToTopBtn.classList.add('visible');
-        } else {
-            backToTopBtn.classList.remove('visible');
-        }
-    }
-});
+/* ============================================================
+   滚动渐入动画
+   ============================================================ */
+function initScrollReveal() {
+  const observerOptions = {
+    threshold: 0.15,
+    rootMargin: '0px 0px -60px 0px',
+  };
 
-// 滚动动画 / Scroll Animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -100px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
+  const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
     });
-}, observerOptions);
+  }, observerOptions);
 
-// 观察所有卡片元素 / Observe all card elements
-document.querySelectorAll('.skill-card, .project-card, .contact-card, .info-item').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    observer.observe(card);
-});
-
-// 打字机效果（可选） / Typewriter Effect (Optional)
-function typeWriter(element, text, speed = 50) {
-    let i = 0;
-    element.textContent = '';
-    
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        }
-    }
-    
-    type();
+  document.querySelectorAll('.skill-card, .project-card, .contact-card, .info-item, .hero-stat').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    observer.observe(el);
+  });
 }
 
-// 项目计数动画 / Project Count Animation
-function animateValue(element, start, end, duration) {
-    let startTimestamp = null;
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        element.textContent = Math.floor(progress * (end - start) + start);
-        if (progress < 1) {
-            window.requestAnimationFrame(step);
-        }
-    };
-    window.requestAnimationFrame(step);
+/* ============================================================
+   返回顶部按钮
+   ============================================================ */
+function initBackToTop() {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+
+  btn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 }
 
-// 页面加载完成后的动画 / Animations after page load
-document.addEventListener('DOMContentLoaded', () => {
-    // 可以在这里添加更多初始化动画
-    console.log('Portfolio loaded successfully!');
+/* ============================================================
+   故障文字效果 — 名字悬停触发
+   ============================================================ */
+function initGlitchOnHover() {
+  const nameEl = document.querySelector('.hero-text h1');
+  if (!nameEl) return;
 
-    if (backToTopBtn) {
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+  const originalText = nameEl.textContent;
+  let glitchTimer = null;
+
+  nameEl.addEventListener('mouseenter', () => {
+    let count = 0;
+    glitchTimer = setInterval(() => {
+      if (count >= 8) {
+        clearInterval(glitchTimer);
+        nameEl.textContent = originalText;
+        return;
+      }
+      // 随机替换部分字符
+      const chars = originalText.split('');
+      const idx = Math.floor(Math.random() * chars.length);
+      const glitchChars = '!@#$%^&*<>?/\\|{}[]';
+      chars[idx] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      nameEl.textContent = chars.join('');
+      count++;
+    }, 60);
+  });
+
+  nameEl.addEventListener('mouseleave', () => {
+    if (glitchTimer) {
+      clearInterval(glitchTimer);
+      glitchTimer = null;
     }
-});
-
-// 复制邮箱到剪贴板 / Copy email to clipboard
-function copyEmail() {
-    const email = '72540564@cityu-dg.edu.cn';
-    navigator.clipboard.writeText(email).then(() => {
-        alert('邮箱已复制到剪贴板！/ Email copied to clipboard!');
-    }).catch(err => {
-        console.error('复制失败 / Failed to copy:', err);
-    });
+    nameEl.textContent = originalText;
+  });
 }
