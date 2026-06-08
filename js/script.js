@@ -98,125 +98,46 @@ function initParticles() {
 }
 
 /* ============================================================
-   终端打字动画 — 故障闪烁增强版
+   Hero 纯文字逐行淡入
    ============================================================ */
 function initTerminalTyping() {
   const terminal = document.getElementById('terminal-output');
   const reveal = document.getElementById('hero-reveal');
   if (!terminal || !reveal) return;
 
-  const glitchChars = '!@#$%^&*<>?/\\|{}[]~`+=;:';
-
   const lines = [
-    { prompt: 'visitor@portfolio:~$', cmd: ' whoami', output: '<span class="output-line">唐翊杰</span>', delay: 400 },
-    { prompt: 'visitor@portfolio:~$', cmd: ' cat role.txt', output: '<span class="output-sub">AI Native Product Builder  |  数据科学硕士  |  香港城市大学（东莞）</span>', delay: 500 },
-    { prompt: 'visitor@portfolio:~$', cmd: ' systemctl status', output: '<span class="output-sub">● active ✓ 4+ AI产品项目  ✓ 3段实习  ✓ 0→1全流程</span>', delay: 500 },
+    { html: '<h1 class="hero-name">唐翊杰</h1>', delay: 300 },
+    { html: '<p class="hero-role">AI Native Product Builder &nbsp;|&nbsp; 数据科学硕士 &nbsp;|&nbsp; 香港城市大学（东莞）</p>', delay: 400 },
+    { html: '<p class="hero-status">4+ AI 产品项目 &nbsp;&middot;&nbsp; 3 段产品/数据实习 &nbsp;&middot;&nbsp; 0 → 1 全流程落地</p>', delay: 400 },
   ];
 
-  let currentLine = 0;
+  let idx = 0;
 
-  function glitchText(element, originalText, duration = 400) {
-    const chars = originalText.split('');
-    const steps = 8;
-    let step = 0;
-    const interval = setInterval(() => {
-      if (step >= steps) {
-        clearInterval(interval);
-        element.textContent = originalText;
-        element.style.textShadow = '';
-        return;
-      }
-      const scrambled = chars.map((c, i) => {
-        if (c === ' ') return ' ';
-        if (Math.random() > 0.5) return glitchChars[Math.floor(Math.random() * glitchChars.length)];
-        return c;
-      }).join('');
-      element.textContent = scrambled;
-      element.style.textShadow = '0 0 10px var(--magenta), 0 0 20px var(--cyan)';
-      step++;
-    }, duration / steps);
-  }
-
-  function typeLine(lineData) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'terminal-line';
-    terminal.appendChild(wrapper);
-
-    const promptSpan = document.createElement('span');
-    promptSpan.className = 'prompt';
-    promptSpan.textContent = lineData.prompt;
-    wrapper.appendChild(promptSpan);
-
-    const cmdSpan = document.createElement('span');
-    cmdSpan.className = 'cmd';
-    wrapper.appendChild(cmdSpan);
-
-    const cmdText = lineData.cmd;
-    let charIdx = 0;
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor-blink';
-    wrapper.appendChild(cursor);
-
-    wrapper.classList.add('visible');
-
-    function typeChar() {
-      if (charIdx < cmdText.length) {
-        // Random glitch effect during typing
-        if (Math.random() < 0.08 && charIdx > 2) {
-          const glitch = document.createElement('span');
-          glitch.className = 'glitch-char';
-          glitch.textContent = glitchChars[Math.floor(Math.random() * glitchChars.length)];
-          cmdSpan.appendChild(glitch);
-          setTimeout(() => glitch.remove(), 80 + Math.random() * 60);
-        }
-        cmdSpan.textContent += cmdText[charIdx];
-        charIdx++;
-        setTimeout(typeChar, 45 + Math.random() * 50);
-      } else {
-        cursor.remove();
-        setTimeout(() => {
-          // Flash the command line before output
-          wrapper.style.textShadow = '0 0 15px var(--cyan)';
-          setTimeout(() => { wrapper.style.textShadow = ''; }, 150);
-
-          const outputLine = document.createElement('div');
-          outputLine.className = 'terminal-line visible';
-          outputLine.innerHTML = '&nbsp;&nbsp;' + lineData.output;
-          outputLine.style.opacity = '0';
-          terminal.appendChild(outputLine);
-
-          // Fade in output with glitch
-          let op = 0;
-          const fadeIn = setInterval(() => {
-            op += 0.15;
-            outputLine.style.opacity = op;
-            if (op >= 1) {
-              clearInterval(fadeIn);
-              outputLine.style.opacity = '1';
-            }
-          }, 40);
-
-          currentLine++;
-          if (currentLine < lines.length) {
-            setTimeout(() => typeLine(lines[currentLine]), 300);
-          } else {
-            // Final glitch on the whole terminal before reveal
-            setTimeout(() => {
-              terminal.style.boxShadow = 'inset 0 0 60px rgba(0, 240, 255, 0.08), 0 0 40px rgba(0, 240, 255, 0.1)';
-              setTimeout(() => {
-                terminal.style.boxShadow = '';
-                reveal.classList.add('show');
-              }, 300);
-            }, 400);
-          }
-        }, 280);
-      }
+  function showLine() {
+    if (idx >= lines.length) {
+      reveal.classList.add('show');
+      return;
     }
+    const div = document.createElement('div');
+    div.className = 'hero-line';
+    div.style.opacity = '0';
+    div.style.transform = 'translateY(12px)';
+    div.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    div.innerHTML = lines[idx].html;
+    terminal.appendChild(div);
 
-    setTimeout(typeChar, 250);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        div.style.opacity = '1';
+        div.style.transform = 'translateY(0)';
+      });
+    });
+
+    idx++;
+    setTimeout(showLine, lines[idx - 1].delay);
   }
 
-  setTimeout(() => typeLine(lines[0]), 800);
+  setTimeout(showLine, 400);
 }
 
 /* ============================================================
