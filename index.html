@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- 鼠标光晕 -->
+    <div id="mouse-glow"></div>
     <!-- 导航栏 / Navigation -->
     <nav class="navbar">
         <div class="container">
@@ -39,43 +41,45 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <h2>你好，我是</h2>
-                    <h1>唐翊杰</h1>
-                    <h3>AI产品经理 · AI Native Product Builder</h3>
-                    <p class="tagline">
-                        数据科学硕士，擅长<strong>AI Agent 产品设计 + LLM 应用开发 + 数据分析</strong>，独立完成多款 AI 产品从 0 到 1 落地。
-                    </p>
-                    <ul class="hero-highlights">
-                        <li>独立完成 <strong>Offer 捕手、IdeaLab</strong> 等 AI 产品全流程：需求分析 → 产品设计 → Demo 开发</li>
-                        <li>熟悉 <strong>LLM · RAG · Agent Workflow · Prompt Engineering</strong> 等 AI 产品核心技术栈</li>
-                        <li>具备 <strong>3 段产品/数据实习</strong>经历，覆盖 CV 算法、供应链数据、用户运营等场景</li>
-                    </ul>
-                    <div class="hero-buttons">
-                        <a href="#projects" class="btn btn-primary">查看代表项目</a>
-                        <a href="Tang_Yijie_Resume.pdf" class="btn btn-secondary" download>下载简历 PDF</a>
-                    </div>
-                    <div class="hero-meta">
-                        <span><i class="fas fa-map-marker-alt"></i> 广东东莞</span>
-                        <span><i class="fas fa-calendar-check"></i> 2026.03 可入职实习</span>
-                    </div>
-                    <div class="hero-stats">
-                        <div class="hero-stat">
-                            <span class="number">4+</span>
-                            <span class="label">AI 产品项目</span>
+                    <!-- 终端打字动画 -->
+                    <div id="terminal-output" class="terminal-hero"></div>
+                    <!-- 后续内容（打字完成后渐入） -->
+                    <div id="hero-reveal" class="hero-reveal" style="opacity:0;">
+                        <p class="tagline">
+                            数据科学硕士，擅长<strong>AI Agent 产品设计 + LLM 应用开发 + 数据分析</strong>，独立完成多款 AI 产品从 0 到 1 落地。
+                        </p>
+                        <ul class="hero-highlights">
+                            <li>独立完成 <strong>Offer 捕手、IdeaLab</strong> 等 AI 产品全流程：需求分析 → 产品设计 → Demo 开发</li>
+                            <li>熟悉 <strong>LLM · RAG · Agent Workflow · Prompt Engineering</strong> 等 AI 产品核心技术栈</li>
+                            <li>具备 <strong>3 段产品/数据实习</strong>经历，覆盖 CV 算法、供应链数据、用户运营等场景</li>
+                        </ul>
+                        <div class="hero-buttons">
+                            <a href="#projects" class="btn btn-primary">查看代表项目</a>
+                            <a href="Tang_Yijie_Resume.pdf" class="btn btn-secondary" download>下载简历 PDF</a>
                         </div>
-                        <div class="hero-stat">
-                            <span class="number">3段</span>
-                            <span class="label">产品/数据实习</span>
+                        <div class="hero-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> 广东东莞</span>
+                            <span><i class="fas fa-calendar-check"></i> 2026.03 可入职实习</span>
                         </div>
-                        <div class="hero-stat">
-                            <span class="number">0→1</span>
-                            <span class="label">从需求到上线</span>
+                        <div class="hero-stats">
+                            <div class="hero-stat">
+                                <span class="number">4+</span>
+                                <span class="label">AI 产品项目</span>
+                            </div>
+                            <div class="hero-stat">
+                                <span class="number">3段</span>
+                                <span class="label">产品/数据实习</span>
+                            </div>
+                            <div class="hero-stat">
+                                <span class="number">0→1</span>
+                                <span class="label">从需求到上线</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="social-links">
-                        <a href="https://github.com/Moshenluo" target="_blank"><i class="fab fa-github"></i></a>
-                        <a href="mailto:72540564@cityu-dg.edu.cn"><i class="fas fa-envelope"></i></a>
-                        <a href="tel:18692677391"><i class="fas fa-phone"></i></a>
+                        <div class="social-links">
+                            <a href="https://github.com/Moshenluo" target="_blank"><i class="fab fa-github"></i></a>
+                            <a href="mailto:72540564@cityu-dg.edu.cn"><i class="fas fa-envelope"></i></a>
+                            <a href="tel:18692677391"><i class="fas fa-phone"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -205,9 +209,17 @@
             <h2 class="section-title">项目经历</h2>
             <p class="section-subtitle">AI 产品从 0 到 1 + 机器学习 + 数据分析，完整项目矩阵</p>
             
+            <!-- 筛选 Tab -->
+            <div class="project-filters">
+                <button class="filter-btn active" data-filter="all">全部</button>
+                <button class="filter-btn" data-filter="ai-product">AI 产品</button>
+                <button class="filter-btn" data-filter="ml">机器学习 & CV</button>
+                <button class="filter-btn" data-filter="data">数据分析</button>
+            </div>
+
             <div class="projects-grid">
-                <!-- Project 1: Offer捕手 (NEW - Featured) -->
-                <div class="project-card featured">
+                <!-- Project 1: Offer捕手 -->
+                <div class="project-card featured" data-category="ai-product">
                     <div class="project-icon">
                         <i class="fas fa-bullseye"></i>
                     </div>
@@ -215,6 +227,11 @@
                     <h3>Offer 捕手 — AI 求职 Agent</h3>
                     <p class="project-tech">Streamlit · OpenAI API · Agent · Plotly</p>
                     <p>面向高校学生求职痛点，设计"岗位发现 → JD 解码 → 简历优化 → 面试训练"完整产品闭环。覆盖岗位猎手、情报官、简历军师、面试教练 4 大模块，支持五维能力雷达图、STAR 面试模拟。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>产品闭环：</strong>岗位猎手 → 情报官 → 简历军师 → 面试教练 | <strong>4大模块</strong>全链路
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/offer-catcher" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -225,8 +242,8 @@
                     </div>
                 </div>
 
-                <!-- Project 2: IdeaLab (NEW - Featured) -->
-                <div class="project-card featured">
+                <!-- Project 2: IdeaLab -->
+                <div class="project-card featured" data-category="ai-product">
                     <div class="project-icon">
                         <i class="fas fa-flask"></i>
                     </div>
@@ -234,6 +251,11 @@
                     <h3>IdeaLab — LLM 科研 Idea 分析工具</h3>
                     <p class="project-tech">Flask · DeepSeek API · LLM · Markdown</p>
                     <p>针对科研人员论文阅读效率低、创新方向发现困难的问题，构建论文检索、方法抽取、研究脉络演化图谱功能。输出完整 PRD 文档，用户访谈驱动产品设计。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>设计驱动：</strong>用户访谈 → PRD文档 → 竞品分析 | <strong>论文检索+演化图谱</strong>
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/idealab" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -244,8 +266,8 @@
                     </div>
                 </div>
 
-                <!-- Project 3: 黑客松 (NEW - Featured) -->
-                <div class="project-card featured">
+                <!-- Project 3: 黑客松 -->
+                <div class="project-card featured" data-category="ai-product">
                     <div class="project-icon">
                         <i class="fas fa-gamepad"></i>
                     </div>
@@ -253,6 +275,11 @@
                     <h3>Slackfish Lite — 工位摸鱼小游戏</h3>
                     <p class="project-tech">AI Coding · 24h Hackathon · Netlify</p>
                     <p>东莞黑客松 · 抖音 AI 创变者计划 24 小时作品：从用户场景出发，独立完成需求分析、交互设计到 MVP 开发。产出用户故事、交互流程图、产品方案文档。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>24h 极限产出：</strong>用户故事 → 交互流程图 → MVP | <strong>🏆 黑客松获奖</strong>
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://slackfish-lite.netlify.app/" target="_blank" class="btn-link">
                             <i class="fas fa-external-link-alt"></i> Live Demo
@@ -260,8 +287,8 @@
                     </div>
                 </div>
 
-                <!-- Project 4: novel-graph / 小说转剧本 (NEW) -->
-                <div class="project-card featured">
+                <!-- Project 4: novel-graph -->
+                <div class="project-card featured" data-category="ai-product">
                     <div class="project-icon">
                         <i class="fas fa-film"></i>
                     </div>
@@ -269,6 +296,11 @@
                     <h3>novel-graph — AI 小说转剧本工具</h3>
                     <p class="project-tech">React · TypeScript · Vite · DeepSeek API · mammoth</p>
                     <p>面向「AI 小说转剧本」竞赛题目的分步工作台。不采用黑箱一键转换，而是引导作者逐步完成章节识别 → 剧本草案 → YAML 导出。支持人物共现图谱、对白识别补全、AI 场景丰富等完整产品化功能。AI 可选，未配置时自动降级为本地启发式规则解析。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>分步工作台：</strong>文本导入 → 章节确认 → 剧本草案 → YAML导出 | <strong>AI可选降级</strong>
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/novel-graph" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -280,7 +312,7 @@
                 </div>
 
                 <!-- Project 5: 建筑图像评估 -->
-                <div class="project-card">
+                <div class="project-card" data-category="ml">
                     <div class="project-icon">
                         <i class="fas fa-image"></i>
                     </div>
@@ -288,6 +320,11 @@
                     <h3>建筑图像美学评估</h3>
                     <p class="project-tech">Python · ResNet18 · PyTorch · NNI</p>
                     <p>构建 4 万+ 建筑图像数据集，对比 NIMA/TANet/MUSIQ 三种模型，TANet 达到 SRCC≈0.53。学士论文项目（2025），为蜂视科技产品提供模型选型决策依据。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>模型对比：</strong>NIMA vs TANet vs MUSIQ | <strong>SRCC≈0.53</strong> | 4万+数据集
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/image-quality-assessment" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -296,7 +333,7 @@
                 </div>
 
                 <!-- Project 6: 气候预测 -->
-                <div class="project-card">
+                <div class="project-card" data-category="ml">
                     <div class="project-icon">
                         <i class="fas fa-cloud-sun-rain"></i>
                     </div>
@@ -304,6 +341,11 @@
                     <h3>气候韧性预测</h3>
                     <p class="project-tech">CatBoost · Optuna · Scikit-Learn</p>
                     <p>SDSC8009 课程项目：构建 Ridge、Lasso、Random Forest、GBDT 等多模型，对气候韧性关键影响因子进行建模与特征重要性分析。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>多模型对比：</strong>Ridge · Lasso · RF · GBDT | <strong>Optuna 超参调优</strong>
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/SDSC-8009-Climate-Forecasting-with-CatBoost" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -312,7 +354,7 @@
                 </div>
 
                 <!-- Project 7: 犯罪分析 -->
-                <div class="project-card">
+                <div class="project-card" data-category="data">
                     <div class="project-icon">
                         <i class="fas fa-chart-bar"></i>
                     </div>
@@ -320,6 +362,11 @@
                     <h3>芝加哥犯罪数据分析</h3>
                     <p class="project-tech">Python · Pandas · Seaborn</p>
                     <p>对 92,598 条犯罪记录进行清洗、特征工程和多维可视化，识别高风险时段与区域，为城市治安策略提供量化依据。</p>
+                    <div class="card-expand">
+                        <div class="card-expand-inner">
+                            <strong>数据规模：</strong>92,598条记录 | <strong>多维可视化</strong> | 风险时段/区域识别
+                        </div>
+                    </div>
                     <div class="project-links">
                         <a href="https://github.com/Moshenluo/sdsc5002-crime-analysis" target="_blank" class="btn-link">
                             <i class="fab fa-github"></i> 查看代码
@@ -411,8 +458,13 @@
     <!-- 页脚 / Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Tang Yijie · 唐翊杰. All Rights Reserved.</p>
-            <p>Built with ❤️ — AI Native Product Builder</p>
+            <div class="terminal-footer">
+                <div class="terminal-line">
+                    <span class="prompt">visitor@portfolio:~$</span> <span class="cmd">exit 0</span>
+                </div>
+                <p class="footer-msg">// Session terminated. Thanks for visiting.</p>
+                <p class="footer-msg">// 唐翊杰 · AI Native Product Builder · 2026</p>
+            </div>
         </div>
     </footer>
 
