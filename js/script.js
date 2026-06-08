@@ -1,18 +1,16 @@
 /* ============================================================
-   唐翊杰 | Portfolio Script v3
-   终端打字 · 鼠标光晕 · 项目筛选 · 卡片展开 · 粒子背景
+   唐翊杰 | Portfolio Script v5
+   开场动画(矩阵雨+粒子汇聚+爆炸) · CRT纯文字 · 鼠标光晕 · 项目筛选
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initParticles();
+  initIntroAnimation();   // 开场动画（含矩阵雨 + 粒子 + 爆炸）
+  initMouseGlow();
   initMobileNav();
   initSmoothScroll();
   initScrollSpy();
   initScrollReveal();
   initBackToTop();
-  initGlitchOnHover();
-  initMouseGlow();
-  initTerminalTyping();
   initProjectFilters();
 });
 
@@ -332,4 +330,295 @@ function initGlitchOnHover() {
     }
     nameEl.textContent = originalText;
   });
+}
+
+/* ═══════════════════════════════════════════════════════
+     开场动画 — 矩阵雨 → 粒子汇聚 → 霓虹爆炸 → CRT纯文字
+     ═══════════════════════════════════════════════════════ */
+function initIntroAnimation() {
+  const overlay = document.getElementById('intro-overlay');
+  const matrixCanvas = document.getElementById('matrix-canvas');
+  const particleCanvas = document.getElementById('particle-canvas');
+  const introName = document.getElementById('intro-name');
+  const introRole = document.getElementById('intro-role');
+  const crtContainer = document.getElementById('crt-container');
+  const terminalOutput = document.getElementById('terminal-output');
+  const heroReveal = document.getElementById('hero-reveal');
+
+  if (!overlay || !matrixCanvas) { showPage(); return; }
+
+  // ─── 第一阶段：矩阵雨 ───
+  const mCtx = matrixCanvas.getContext('2d');
+  let mW, mH;
+  function resizeMatrix() {
+    mW = matrixCanvas.width = window.innerWidth;
+    mH = matrixCanvas.height = window.innerHeight;
+  }
+  resizeMatrix();
+  window.addEventListener('resize', resizeMatrix);
+
+  const matrixChars = 'アイウエオカキクケコ0123456789ABCDEF唐翊杰AI01010110';
+  const fontSize = 15;
+  let columns = Math.floor(mW / fontSize);
+  let drops = Array(columns).fill(1);
+
+  let matrixRunning = true;
+  function drawMatrix() {
+    if (!matrixRunning) return;
+    mCtx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+    mCtx.fillRect(0, 0, mW, mH);
+    mCtx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const ch = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+      const alpha = 0.3 + Math.random() * 0.7;
+      mCtx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
+      mCtx.fillText(ch, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > mH && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    requestAnimationFrame(drawMatrix);
+  }
+  drawMatrix();
+
+  // 2.8秒后停止矩阵雨，进入第二阶段
+  setTimeout(() => {
+    matrixRunning = false;
+    mCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+    mCtx.fillRect(0, 0, mW, mH);
+    initParticleConverge();
+  }, 2800);
+
+  // ─── 第二阶段：粒子汇聚成名字 ───
+  function initParticleConverge() {
+    if (!particleCanvas) { showNameDirectly(); return; }
+    const pCtx = particleCanvas.getContext('2d');
+    let pW, pH;
+    function resizeP() {
+      pW = particleCanvas.width = window.innerWidth;
+      pH = particleCanvas.height = window.innerHeight;
+    }
+    resizeP();
+    window.addEventListener('resize', resizeP);
+
+    // 生成目标文字形状的点阵
+    const targetPoints = [];
+    const tmpCanvas = document.createElement('canvas');
+    const tmpCtx = tmpCanvas.getContext('2d');
+    tmpCanvas.width = 900;
+    tmpCanvas.height = 200;
+    tmpCtx.font = '900 110px "Space Grotesk", sans-serif';
+    tmpCtx.textAlign = 'center';
+    tmpCtx.textBaseline = 'middle';
+    tmpCtx.fillStyle = '#fff';
+    tmpCtx.fillText('唐翊杰', 450, 100);
+
+    const imgData = tmpCtx.getImageData(0, 0, 900, 200);
+    for (let y = 0; y < 200; y += 5) {
+      for (let x = 0; x < 900; x += 5) {
+        const idx = (y * 900 + x) * 4;
+        if (imgData.data[idx + 3] > 128) {
+          targetPoints.push({
+            x: (x - 450) * (window.innerWidth / 900) + window.innerWidth / 2,
+            y: (y - 100) * (window.innerHeight / 500) + window.innerHeight / 2
+          });
+        }
+      }
+    }
+
+    // 如果点太少，用备用方案
+    if (targetPoints.length < 50) {
+      for (let i = 0; i < 300; i++) {
+        const angle = (i / 300) * Math.PI * 2;
+        const r = 120;
+        targetPoints.push({
+          x: Math.cos(angle) * r + window.innerWidth / 2,
+          y: Math.sin(angle) * r + window.innerHeight / 2 - 30
+        });
+      }
+    }
+
+    // 创建粒子
+    const particles = [];
+    const PARTICLE_COUNT = Math.min(targetPoints.length, 500);
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        tx: targetPoints[i % targetPoints.length].x + (Math.random() - 0.5) * 30,
+        ty: targetPoints[i % targetPoints.length].y + (Math.random() - 0.5) * 30,
+        size: 1.5 + Math.random() * 2,
+        hue: Math.random() > 0.5 ? 190 : 275,
+        alpha: 0.6 + Math.random() * 0.4,
+        speed: 0.02 + Math.random() * 0.03
+      });
+    }
+
+    let convergeProgress = 0;
+    let explosionTriggered = false;
+
+    function animateParticles() {
+      pCtx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+      pCtx.fillRect(0, 0, pW, pH);
+      convergeProgress += 0.018;
+
+      particles.forEach(p => {
+        // 向目标点移动
+        const dx = p.tx - p.x;
+        const dy = p.ty - p.y;
+        p.x += dx * p.speed;
+        p.y += dy * p.speed;
+
+        // 在目标位置附近抖动
+        if (Math.abs(dx) < 5 && Math.abs(dy) < 5) {
+          p.x += (Math.random() - 0.5) * 2;
+          p.y += (Math.random() - 0.5) * 2;
+        }
+
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.size * (0.5 + convergeProgress * 0.5), 0, Math.PI * 2);
+        pCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.alpha * Math.min(convergeProgress * 2, 1)})`;
+        pCtx.fill();
+
+        // 霓虹发光
+        pCtx.beginPath();
+        pCtx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        pCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.alpha * 0.1 * Math.min(convergeProgress * 2, 1)})`;
+        pCtx.fill();
+      });
+
+      // 汇聚完成后触发爆炸
+      if (convergeProgress >= 1 && !explosionTriggered) {
+        explosionTriggered = true;
+        triggerExplosion(particles);
+        setTimeout(() => {
+          particleCanvas.style.transition = 'opacity 0.5s';
+          particleCanvas.style.opacity = '0';
+          showNameText();
+        }, 800);
+        return;
+      }
+
+      requestAnimationFrame(animateParticles);
+    }
+
+    animateParticles();
+  }
+
+  // ─── 第三阶段：霓虹爆炸 ───
+  function triggerExplosion(particles) {
+    particles.forEach(p => {
+      const angle = Math.random() * Math.PI * 2;
+      const force = 3 + Math.random() * 8;
+      p.tx = p.x + Math.cos(angle) * force * 80;
+      p.ty = p.y + Math.sin(angle) * force * 80;
+      p.speed = 0.08 + Math.random() * 0.12;
+      p.alpha = 0;
+    });
+  }
+
+  // ─── 显示名字文字 ───
+  function showNameText() {
+    if (introName) {
+      introName.classList.remove('intro-name-hidden');
+      introName.classList.add('intro-name-visible');
+      introName.style.position = 'relative';
+      introName.style.zIndex = '10';
+      document.getElementById('intro-text-container').style.position = 'relative';
+      document.getElementById('intro-text-container').style.zIndex = '10';
+    }
+    if (introRole) {
+      setTimeout(() => {
+        introRole.classList.remove('intro-role-hidden');
+        introRole.classList.add('intro-role-visible');
+      }, 400);
+    }
+    // 1.5秒后淡出覆盖层
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      // 显示 CRT 纯文字
+      setTimeout(() => {
+        showCRTPlainText();
+      }, 900);
+    }, 2200);
+  }
+
+  // 备用：如果 canvas 不可用
+  function showNameDirectly() {
+    if (introName) {
+      introName.classList.remove('intro-name-hidden');
+      introName.classList.add('intro-name-visible');
+    }
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      setTimeout(() => showCRTPlainText(), 900);
+    }, 1500);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+     CRT 内部纯文字逐行淡入
+     ═══════════════════════════════════════════════════════ */
+function showCRTPlainText() {
+  const terminal = document.getElementById('terminal-output');
+  const reveal = document.getElementById('hero-reveal');
+  if (!terminal) return;
+
+  // 清空可能残留内容
+  terminal.innerHTML = '';
+
+  const lines = [
+    { type: 'name',   text: '唐翊杰',                              delay: 0   },
+    { type: 'role',   text: 'AI Native Product Builder｜数据科学硕士｜香港城市大学（东莞）', delay: 500 },
+    { type: 'status', text: '4+ AI 产品项目 · 3 段产品/数据实习 · 0→1 全流程落地',     delay: 900 },
+  ];
+
+  let idx = 0;
+  function showNext() {
+    if (idx >= lines.length) {
+      // 所有文字显示完毕，淡入 Hero 后续内容
+      setTimeout(() => {
+        if (reveal) reveal.classList.add('show');
+      }, 600);
+      return;
+    }
+
+    const line = lines[idx];
+    const div = document.createElement('div');
+    div.className = 'hero-line';
+
+    if (line.type === 'name') {
+      div.innerHTML = `<h1 class="hero-line-name">${line.text}</h1>`;
+    } else if (line.type === 'role') {
+      div.innerHTML = `<p class="hero-line-role">${line.text}</p>`;
+    } else {
+      // status：用 · 分隔
+      const parts = line.text.split('·').map(s => s.trim()).filter(Boolean);
+      const sep = '<span class="sep"> · </span>';
+      div.innerHTML = `<p class="hero-line-status">${parts.join(sep)}</p>`;
+    }
+
+    terminal.appendChild(div);
+
+    // 触发动画
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        div.classList.add('show');
+      });
+    });
+
+    idx++;
+    setTimeout(showNext, line.delay);
+  }
+
+  showNext();
+}
+
+/* ═══════════════════════════════════════════════════════
+     备用：直接显示页面（无动画）
+     ═══════════════════════════════════════════════════════ */
+function showPage() {
+  const overlay = document.getElementById('intro-overlay');
+  if (overlay) overlay.style.display = 'none';
+  const reveal = document.getElementById('hero-reveal');
+  if (reveal) reveal.classList.add('show');
 }
