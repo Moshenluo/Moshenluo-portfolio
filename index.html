@@ -60,8 +60,8 @@
                         <div class="crt-glow"></div>
                         <div id="terminal-output" class="terminal-hero"></div>
                     </div>
-                    <!-- 后续内容（打字完成后渐入） -->
-                    <div id="hero-reveal" class="hero-reveal" style="opacity:0;">
+                    <!-- 后续内容（桌面端打字完成后渐入，移动端默认可见） -->
+                    <div id="hero-reveal" class="hero-reveal mobile-visible" style="opacity:0;">
                         <p class="tagline">
                             数据科学硕士，擅长<strong>AI Agent 产品设计 + LLM 应用开发 + 数据分析</strong>，独立完成多款 AI 产品从 0 到 1 落地。
                         </p>
@@ -76,7 +76,7 @@
                         </div>
                         <div class="hero-meta">
                             <span><i class="fas fa-map-marker-alt"></i> 广东东莞</span>
-                            <span><i class="fas fa-calendar-check"></i> 2026.03 可入职实习</span>
+                            <span><i class="fas fa-calendar-check"></i> 2026.06 可入职实习</span>
                         </div>
                         <div class="hero-stats">
                             <div class="hero-stat">
@@ -94,7 +94,7 @@
                         </div>
                         <div class="social-links">
                             <a href="https://github.com/Moshenluo" target="_blank"><i class="fab fa-github"></i></a>
-                            <a href="mailto:72540564@cityu-dg.edu.cn"><i class="fas fa-envelope"></i></a>
+                            <a href="mailto:18692677391@163.com"><i class="fas fa-envelope"></i></a>
                             <a href="tel:18692677391"><i class="fas fa-phone"></i></a>
                         </div>
                     </div>
@@ -107,33 +107,71 @@
     <section id="about" class="about">
         <div class="container">
             <h2 class="section-title">关于我</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>我是唐翊杰，<strong>香港城市大学（东莞）数据科学硕士</strong>在读（2025–2027）。我是一名 <strong>AI Native Product Builder</strong>，善于将 AI 技术与用户需求结合，独立完成 AI 产品从需求分析、产品设计到 Demo 开发的全流程。</p>
-                    
-                    <div class="info-grid">
-                        <div class="info-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <div>
-                                <h4>教育背景</h4>
-                                <p>香港城市大学（东莞）- 数据科学硕士</p>
-                                <p>上海海洋大学 - 信息管理与信息系统学士</p>
+            <p class="section-subtitle">// 系统信息 · SYSTEM_INFO</p>
+
+            <div class="about-layout">
+                <!-- 左侧：终端卡片 -->
+                <div class="about-terminal">
+                    <div class="term-header">
+                        <span class="term-dot red"></span>
+                        <span class="term-dot yellow"></span>
+                        <span class="term-dot green"></span>
+                        <span class="term-title">whoami.term</span>
+                    </div>
+                    <div class="term-body">
+                        <div class="term-line"><span class="prompt-symbol">❯</span> whoami</div>
+                        <div class="term-output">唐翊杰 — AI Native Product Builder</div>
+
+                        <div class="term-line"><span class="prompt-symbol">❯</span> cat background.txt</div>
+                        <div class="term-output">
+                            香港城市大学（东莞）数据科学硕士在读（2025–2027）<br>
+                            上海海洋大学 · 信息管理与信息系统学士（2021–2025）
+                        </div>
+
+                        <div class="term-line"><span class="prompt-symbol">❯</span> echo $PHILOSOPHY</div>
+                        <div class="term-output highlight">"用 AI 把想法变成产品，从 0 到 1 把事做成。"</div>
+
+                        <div class="term-line blinking"><span class="prompt-symbol">❯</span> <span class="cursor-block">█</span></div>
+                    </div>
+                </div>
+
+                <!-- 右侧：能力标签 + 数据 -->
+                <div class="about-right">
+                    <div class="about-card">
+                        <div class="about-card-title"><i class="fas fa-rocket"></i> 核心优势</div>
+                        <div class="about-tags">
+                            <span class="about-tag">AI 产品设计</span>
+                            <span class="about-tag">LLM 应用开发</span>
+                            <span class="about-tag">数据分析</span>
+                            <span class="about-tag">0→1 落地</span>
+                            <span class="about-tag">用户访谈</span>
+                            <span class="about-tag">PRD 撰写</span>
+                        </div>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-card-title"><i class="fas fa-trophy"></i> 关键数据</div>
+                        <div class="about-stats">
+                            <div class="about-stat">
+                                <span class="as-num">4+</span>
+                                <span class="as-label">AI 产品项目</span>
+                            </div>
+                            <div class="about-stat">
+                                <span class="as-num">3 段</span>
+                                <span class="as-label">产品/数据实习</span>
+                            </div>
+                            <div class="about-stat">
+                                <span class="as-num">2 校</span>
+                                <span class="as-label">跨校经历</span>
                             </div>
                         </div>
-                        <div class="info-item">
-                            <i class="fas fa-briefcase"></i>
-                            <div>
-                                <h4>求职意向</h4>
-                                <p>AI产品经理 · AI Native Product Builder</p>
-                                <p>暑期实习 / 校招均可</p>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <h4>所在地</h4>
-                                <p>广东东莞</p>
-                            </div>
+                    </div>
+                    <div class="about-card">
+                        <div class="about-card-title"><i class="fas fa-bullseye"></i> 求职意向</div>
+                        <div class="about-intent">
+                            <span class="intent-tag">AI 产品经理</span>
+                            <span class="intent-tag">AI Native Builder</span>
+                            <span class="intent-tag">暑期实习</span>
+                            <span class="intent-tag">校招</span>
                         </div>
                     </div>
                 </div>
@@ -437,7 +475,7 @@
                         </div>
                         <div class="profile-row">
                             <span class="profile-key">AVAIL</span>
-                            <span class="profile-val">2026.03 可入职实习</span>
+                            <span class="profile-val">2026.06 可入职实习</span>
                         </div>
                         <div class="profile-divider"></div>
                         <div class="profile-row">
@@ -545,14 +583,14 @@
                     <div class="cc-arrow"><i class="fas fa-arrow-right"></i></div>
                 </a>
 
-                <a href="mailto:72540564@cityu-dg.edu.cn" class="contact-card-v2">
+                <a href="mailto:18692677391@163.com" class="contact-card-v2">
                     <div class="cc-icon-wrap">
                         <i class="fas fa-envelope"></i>
                         <div class="cc-ripple"></div>
                     </div>
                     <div class="cc-info">
                         <span class="cc-label">EMAIL</span>
-                        <span class="cc-value">72540564@cityu-dg.edu.cn</span>
+                        <span class="cc-value">18692677391@163.com</span>
                     </div>
                     <div class="cc-arrow"><i class="fas fa-arrow-right"></i></div>
                 </a>
