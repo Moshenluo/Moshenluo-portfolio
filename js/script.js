@@ -306,6 +306,26 @@ function initIntroAnimation() {
 
   if (!overlay || !matrixCanvas) { showPage(); return; }
 
+  // ── 移动端/低性能设备：跳过动画直接显示 ──
+  const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+                || window.innerWidth < 768;
+  if (isMobile) {
+    overlay.style.display = 'none';
+    showCRTPlainText();
+    const reveal = document.getElementById('hero-reveal');
+    if (reveal) reveal.classList.add('show');
+    return;
+  }
+
+  // ── 全局超时保护：12秒内动画未完成则强制结束 ──
+  const forceEndTimer = setTimeout(() => {
+    overlay.style.transition = 'none';
+    overlay.style.display = 'none';
+    showCRTPlainText();
+    const reveal = document.getElementById('hero-reveal');
+    if (reveal) reveal.classList.add('show');
+  }, 12000);
+
   // ─── 第一阶段：矩阵雨 ───
   const mCtx = matrixCanvas.getContext('2d');
   let mW, mH;
@@ -559,6 +579,7 @@ function initIntroAnimation() {
 
   // ─── CRT 边框浮现 ───
   function showCRTFrameReveal() {
+    clearTimeout(forceEndTimer); // 动画正常完成，取消超时保护
     const crtFrame = document.getElementById('crt-container');
     if (crtFrame) {
       crtFrame.style.opacity = '0';
