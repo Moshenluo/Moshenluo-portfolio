@@ -955,6 +955,13 @@ body::after {
   .profile-layout { grid-template-columns: 1fr; }
 }
 
+/* 移动端：强制跳过覆盖层（JS 也会跳过动画，双重保险） */
+@media (max-width: 767px) {
+  #intro-overlay { display: none !important; }
+  #hero-reveal   { opacity: 1 !important; transform: none !important; }
+  #crt-container { opacity: 1 !important; }
+}
+
 /* ============================================================
    联系方式 v2 — 横向大卡 + 光波扩散
    ============================================================ */
