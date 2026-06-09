@@ -827,6 +827,253 @@ body::after {
   .info-grid { grid-template-columns: 1fr; }
 }
 
+/* ============================================================
+   基本信息 — 终端面板 + 时间轴
+   ============================================================ */
+.resume { padding: var(--section-gap) 0; }
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  align-items: start;
+}
+
+/* ── 左侧终端面板 ── */
+.profile-panel {
+  background: rgba(0, 240, 255, 0.03);
+  border: 1.5px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.06), var(--shadow-card);
+  font-family: var(--font-mono);
+}
+.panel-header {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.75rem 1.2rem;
+  background: rgba(0, 240, 255, 0.06);
+  border-bottom: 1px solid rgba(0, 240, 255, 0.12);
+}
+.panel-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+.dot-red    { background: #ff5f57; box-shadow: 0 0 6px #ff5f57; }
+.dot-yellow { background: #febc2e; box-shadow: 0 0 6px #febc2e; }
+.dot-green  { background: #28c840; box-shadow: 0 0 6px #28c840; }
+.panel-title {
+  margin-left: 0.5rem; font-size: 0.78rem;
+  color: var(--text-dim); letter-spacing: 0.5px;
+}
+.panel-body { padding: 1.4rem 1.6rem; }
+.profile-row {
+  display: flex; align-items: flex-start;
+  gap: 0.75rem; margin-bottom: 0.9rem;
+  font-size: 0.82rem; line-height: 1.5;
+}
+.profile-key {
+  color: var(--cyan); font-weight: 700;
+  min-width: 68px; letter-spacing: 0.5px;
+  font-size: 0.75rem; padding-top: 2px;
+}
+.profile-val { color: var(--text-secondary); }
+.profile-val.cyan { color: var(--cyan); text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+.profile-val.dim  { color: var(--text-dim); }
+.profile-divider {
+  border: none; border-top: 1px solid rgba(0,240,255,0.1);
+  margin: 1rem 0;
+}
+.status-dot {
+  display: inline-block; width: 7px; height: 7px;
+  background: #28c840; border-radius: 50%;
+  margin-right: 6px; vertical-align: middle;
+  box-shadow: 0 0 8px #28c840;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+@keyframes statusPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── 右侧时间轴 ── */
+.timeline-wrap { display: flex; flex-direction: column; gap: 2.2rem; }
+.timeline-block {}
+.tl-label {
+  font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700;
+  color: var(--cyan); letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 1.2rem; padding-left: 1.4rem; position: relative;
+}
+.tl-label::before {
+  content: ''; position: absolute; left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--cyan); box-shadow: 0 0 10px var(--cyan);
+}
+.tl-label.purple { color: var(--purple); }
+.tl-label.purple::before { background: var(--purple); box-shadow: 0 0 10px var(--purple); }
+
+.tl-items { border-left: 1.5px solid rgba(0,240,255,0.15); margin-left: 3px; padding-left: 1.5rem; }
+.tl-item {
+  position: relative; padding: 0 0 1.4rem 0;
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute; left: -1.94rem; top: 5px;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--deep);
+  border: 2px solid var(--cyan);
+  box-shadow: 0 0 8px rgba(0,240,255,0.4);
+  flex-shrink: 0;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.tl-dot.purple { border-color: var(--purple); box-shadow: 0 0 8px rgba(180,0,255,0.4); }
+.tl-item:hover .tl-dot {
+  transform: scale(1.4);
+  box-shadow: 0 0 16px rgba(0,240,255,0.7);
+}
+.tl-item:hover .tl-dot.purple { box-shadow: 0 0 16px rgba(180,0,255,0.7); }
+
+.tl-content { flex: 1; }
+.tl-period {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 0.2rem;
+}
+.tl-title {
+  font-family: var(--font-sans); font-size: 1rem; font-weight: 700;
+  color: var(--text-primary); margin-bottom: 0.2rem;
+}
+.tl-sub {
+  font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);
+}
+
+.resume-actions {
+  display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .profile-layout { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   联系方式 v2 — 横向大卡 + 光波扩散
+   ============================================================ */
+.contact-grid-v2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+.contact-card-v2 {
+  display: flex; align-items: center; gap: 1.25rem;
+  padding: 1.6rem 1.8rem;
+  background: var(--surface);
+  border: 1.5px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-md);
+  text-decoration: none; color: inherit;
+  box-shadow: var(--shadow-card);
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.contact-card-v2::before {
+  content: ''; position: absolute;
+  top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0,240,255,0.06), transparent);
+  transition: left 0.5s ease;
+}
+.contact-card-v2:hover::before { left: 150%; }
+.contact-card-v2:hover {
+  border-color: rgba(0,240,255,0.45);
+  transform: translateY(-3px);
+  box-shadow: 0 0 40px rgba(0,240,255,0.1), var(--shadow-card);
+}
+.contact-card-v2.github:hover { border-color: rgba(180,0,255,0.45); }
+.contact-card-v2.github:hover { box-shadow: 0 0 40px rgba(180,0,255,0.1), var(--shadow-card); }
+
+/* 图标 + 光波 */
+.cc-icon-wrap {
+  position: relative; flex-shrink: 0;
+  width: 54px; height: 54px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(0,240,255,0.08);
+  border: 1.5px solid rgba(0,240,255,0.2);
+}
+.cc-icon-wrap i { font-size: 1.4rem; color: var(--cyan); position: relative; z-index: 1; }
+.contact-card-v2.github .cc-icon-wrap i { color: var(--purple); }
+.contact-card-v2.github .cc-icon-wrap { background: rgba(180,0,255,0.08); border-color: rgba(180,0,255,0.2); }
+
+.cc-ripple {
+  position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid rgba(0,240,255,0.3);
+  opacity: 0; transform: scale(1);
+}
+.contact-card-v2:hover .cc-ripple {
+  animation: rippleOut 0.8s ease-out forwards;
+}
+@keyframes rippleOut {
+  0%   { opacity: 0.8; transform: scale(1); }
+  100% { opacity: 0;   transform: scale(2.2); }
+}
+.contact-card-v2.github:hover .cc-ripple { border-color: rgba(180,0,255,0.4); }
+
+.cc-info { flex: 1; }
+.cc-label {
+  display: block; font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--text-dim); letter-spacing: 1px; margin-bottom: 0.25rem;
+}
+.cc-value {
+  display: block; font-family: var(--font-mono); font-size: 0.95rem;
+  color: var(--text-primary); font-weight: 600;
+}
+.cc-arrow {
+  color: var(--text-dim); font-size: 0.85rem;
+  transition: color 0.3s, transform 0.3s;
+}
+.contact-card-v2:hover .cc-arrow { color: var(--cyan); transform: translateX(4px); }
+.contact-card-v2.github:hover .cc-arrow { color: var(--purple); }
+.contact-card-v2.location { cursor: default; }
+
+/* ping 在线状态 */
+.cc-status {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: #28c840;
+}
+.ping-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #28c840; box-shadow: 0 0 8px #28c840;
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+/* 底部横幅 */
+.contact-banner {
+  border: 1.5px solid rgba(0,240,255,0.15);
+  border-radius: var(--radius-md);
+  padding: 1.4rem 2rem;
+  background: rgba(0,240,255,0.03);
+  font-family: var(--font-mono); font-size: 0.9rem;
+  display: flex; flex-direction: column; gap: 0.6rem;
+}
+.banner-line { display: flex; align-items: center; gap: 1rem; }
+.banner-key {
+  color: var(--cyan); font-weight: 700; font-size: 0.78rem;
+  letter-spacing: 1.5px; min-width: 64px;
+}
+.banner-val { color: var(--text-secondary); }
+.blink-cursor {
+  color: var(--cyan);
+  animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (max-width: 768px) {
+  .contact-grid-v2 { grid-template-columns: 1fr; }
+}
+
 /* ═══════════════════════════════════════════════════════
    开场动画覆盖层 — 矩阵雨 + 粒子汇聚 + 霓虹爆炸
    ═══════════════════════════════════════════════════════ */
