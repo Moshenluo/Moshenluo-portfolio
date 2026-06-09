@@ -202,16 +202,6 @@ body::after {
   margin: 0;
 }
 
-/* Hero 后续内容渐入 */
-.hero-reveal {
-  transition: opacity 0.8s ease, transform 0.8s ease;
-  transform: translateY(20px);
-}
-.hero-reveal.show {
-  opacity: 1 !important;
-  transform: translateY(0);
-}
-
 /* 名字 — 厚重渐变 + 加强辉光 */
 .hero-text h1 {
   font-family: var(--font-mono);
@@ -1362,4 +1352,14 @@ body::after {
 .hero-reveal.show {
   opacity: 1 !important;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

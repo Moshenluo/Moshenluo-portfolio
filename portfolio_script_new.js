@@ -15,89 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ============================================================
-   粒子背景 — 赛博数据流
-   ============================================================ */
-function initParticles() {
-  const canvas = document.createElement('canvas');
-  canvas.id = 'particles-canvas';
-  document.body.prepend(canvas);
-
-  const ctx = canvas.getContext('2d');
-  let w, h;
-  const particles = [];
-  const PARTICLE_COUNT = 80;
-
-  function resize() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  class Particle {
-    constructor() {
-      this.reset();
-    }
-    reset() {
-      this.x = Math.random() * w;
-      this.y = Math.random() * h;
-      this.size = Math.random() * 2 + 0.5;
-      this.speedX = (Math.random() - 0.5) * 0.6;
-      this.speedY = (Math.random() - 0.5) * 0.6;
-      this.opacity = Math.random() * 0.5 + 0.1;
-      this.fadeSpeed = (Math.random() - 0.5) * 0.008;
-      this.hue = Math.random() > 0.5 ? 190 : 275;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      this.opacity += this.fadeSpeed;
-      if (this.opacity <= 0.05 || this.opacity >= 0.6) this.fadeSpeed *= -1;
-      if (this.x < -10) this.x = w + 10;
-      if (this.x > w + 10) this.x = -10;
-      if (this.y < -10) this.y = h + 10;
-      if (this.y > h + 10) this.y = -10;
-    }
-    draw(ctx) {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity})`;
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
-      ctx.fillStyle = `hsla(${this.hue}, 100%, 65%, ${this.opacity * 0.15})`;
-      ctx.fill();
-    }
-  }
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) particles.push(new Particle());
-
-  function animate() {
-    ctx.clearRect(0, 0, w, h);
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 100) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(0, 240, 255, ${0.04 * (1 - dist / 100)})`;
-          ctx.lineWidth = 0.5;
-          ctx.stroke();
-        }
-      }
-    }
-    particles.forEach(p => { p.update(); p.draw(ctx); });
-    requestAnimationFrame(animate);
-  }
-  animate();
-}
-
-
-
-/* ============================================================
    鼠标光晕
    ============================================================ */
 function initMouseGlow() {
@@ -256,41 +173,6 @@ function initBackToTop() {
   });
 }
 
-/* ============================================================
-   故障文字效果 — 名字悬停触发（保留兼容）
-   ============================================================ */
-function initGlitchOnHover() {
-  const nameEl = document.querySelector('.hero-text h1');
-  if (!nameEl) return;
-  const originalText = nameEl.textContent;
-  let glitchTimer = null;
-
-  nameEl.addEventListener('mouseenter', () => {
-    let count = 0;
-    glitchTimer = setInterval(() => {
-      if (count >= 8) {
-        clearInterval(glitchTimer);
-        nameEl.textContent = originalText;
-        return;
-      }
-      const chars = originalText.split('');
-      const idx = Math.floor(Math.random() * chars.length);
-      const glitchChars = '!@#$%^&*<>?/\\|{}[]';
-      chars[idx] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
-      nameEl.textContent = chars.join('');
-      count++;
-    }, 60);
-  });
-
-  nameEl.addEventListener('mouseleave', () => {
-    if (glitchTimer) {
-      clearInterval(glitchTimer);
-      glitchTimer = null;
-    }
-    nameEl.textContent = originalText;
-  });
-}
-
 /* ═══════════════════════════════════════════════════════
      开场动画 — 矩阵雨 → 粒子汇聚 → 霓虹爆炸 → CRT纯文字
      ═══════════════════════════════════════════════════════ */
@@ -306,7 +188,7 @@ function initIntroAnimation() {
 
   // ── 移动端检测：UA + 屏幕宽度双保险 ──
   const uaMobile = /Android|iPhone|iPad|iPod|Mobile|Phone|Tablet/i.test(navigator.userAgent);
-  const widthMobile = Math.min(window.innerWidth || 9999, window.outerWidth || 9999) < 768;
+  const widthMobile = window.innerWidth < 768;
   const isMobile = uaMobile || widthMobile;
 
   if (isMobile) {

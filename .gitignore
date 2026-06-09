@@ -1,0 +1,18 @@
+# Office temp files
+~$*.docx
+~$*.xlsx
+~$*.pptx
+
+# AI assistant logs
+.workbuddy/
+
+# Dependencies
+node_modules/
+__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Env / secrets
+.env
