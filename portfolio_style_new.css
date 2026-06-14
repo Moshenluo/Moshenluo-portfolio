@@ -2,7 +2,6 @@
    唐翊杰 | AI Native Product Builder
    科幻主题 · Cyberpunk Terminal v2 — 厚重版
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700;800&display=swap');
 
 /* ============================================================
    CSS 变量 — 深邃厚重
@@ -56,6 +55,9 @@ body {
   -webkit-font-smoothing: antialiased;
   cursor: crosshair;
 }
+
+/* 性能：离屏内容延迟渲染 */
+section { content-visibility: auto; contain-intrinsic-size: 500px; }
 a, button, .btn, .btn-link, .filter-btn, .nav-links a, #backToTop, .project-card, .skill-card, .info-item, .contact-card {
   cursor: pointer;
 }
@@ -138,7 +140,7 @@ body::after {
    Hero — 暗流涌动
    ============================================================ */
 .hero {
-  padding: 200px 0 140px; position: relative; overflow: hidden;
+  padding: 180px 0 110px; position: relative; overflow: hidden;
 }
 /* 深层光晕 */
 .hero::before {
@@ -160,69 +162,12 @@ body::after {
 }
 .hero-text { max-width: 720px; margin: 0 auto; }
 
-.hero-text h2 {
-  font-family: var(--font-mono); font-size: 1.05rem; font-weight: 500;
-  color: var(--text-secondary); letter-spacing: 2px; margin-bottom: 0.5rem;
-}
-
-
-/* --- 纯文字 Hero --- */
-.hero { padding: 180px 0 110px; }
 .terminal-hero {
   margin-bottom: 1.5rem;
   text-align: center;
   max-width: 720px;
   margin-left: auto; margin-right: auto;
   min-height: 160px;
-}
-.hero-line {
-  margin-bottom: 0.75rem;
-}
-.hero-name {
-  font-family: var(--font-sans);
-  font-size: clamp(3rem, 7vw, 5rem);
-  font-weight: 800;
-  margin: 0;
-  background: linear-gradient(135deg, var(--cyan), var(--purple), var(--magenta));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.3));
-  letter-spacing: -1px;
-}
-.hero-role {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  margin: 0.5rem 0;
-  letter-spacing: 0.5px;
-}
-.hero-status {
-  font-size: 0.95rem;
-  color: var(--text-dim);
-  margin: 0;
-}
-
-/* 名字 — 厚重渐变 + 加强辉光 */
-.hero-text h1 {
-  font-family: var(--font-mono);
-  font-size: clamp(3.2rem, 8vw, 5.5rem);
-  font-weight: 800; margin: 0.5rem 0;
-  background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 50%, var(--magenta) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: drop-shadow(0 0 40px rgba(0, 240, 255, 0.4)) drop-shadow(0 0 80px rgba(180, 0, 255, 0.2));
-  letter-spacing: -1px;
-  animation: titleGlitch 6s infinite;
-}
-@keyframes titleGlitch {
-  0%, 94%, 96%, 98%, 100% { transform: translate(0); }
-  95% { transform: translate(-3px, 2px); }
-  97% { transform: translate(3px, -2px); }
-}
-
-.hero-text h3 {
-  font-family: var(--font-mono); font-size: 1.3rem; font-weight: 500;
-  color: var(--text-primary); letter-spacing: 1px; opacity: 0.9;
 }
 
 .tagline {
@@ -643,63 +588,12 @@ body::after {
    简历
    ============================================================ */
 .resume { padding: var(--section-gap) 0; position: relative; }
-.resume-content { max-width: 900px; margin: 0 auto; }
-.resume-preview {
-  background: var(--surface); padding: 3rem;
-  border-radius: var(--radius-md); border: 2px solid var(--border-card);
-  box-shadow: var(--shadow-card); margin-bottom: 2rem;
-}
-.resume-preview h3 {
-  font-family: var(--font-mono); font-size: 1.2rem; color: var(--cyan);
-  margin-bottom: 2rem; text-align: center; font-weight: 700;
-}
-.resume-sections { display: grid; gap: 2rem; }
-.resume-section h4 {
-  font-family: var(--font-mono); font-size: 0.88rem; color: var(--purple);
-  margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem;
-  font-weight: 700;
-}
-.resume-section h4 i { color: var(--cyan); }
-.resume-section ul { list-style: none; padding-left: 1rem; }
-.resume-section li {
-  margin-bottom: 0.5rem; position: relative; color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-.resume-section li::before {
-  content: '›'; color: var(--cyan); font-weight: 700;
-  position: absolute; left: -1rem;
-}
-.resume-section p { color: var(--text-secondary); font-size: 0.9rem; }
 .resume-actions { display: flex; gap: 1rem; justify-content: center; }
 
 /* ============================================================
    联系方式
    ============================================================ */
 .contact { padding: var(--section-gap) 0; position: relative; }
-.contact-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;
-}
-.contact-card {
-  text-align: center; padding: 2rem;
-  background: var(--surface); border-radius: var(--radius-md);
-  border: 2px solid var(--border-card); box-shadow: var(--shadow-card);
-  transition: border-color 0.3s, transform 0.25s, box-shadow 0.3s;
-}
-.contact-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(0, 240, 255, 0.35);
-  box-shadow: 0 0 40px rgba(0, 240, 255, 0.08), var(--shadow-card);
-}
-.contact-card i { font-size: 2rem; color: var(--cyan); margin-bottom: 0.75rem; }
-.contact-card h3 {
-  font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-primary);
-  margin-bottom: 0.5rem; letter-spacing: 0.5px; font-weight: 700;
-}
-.contact-card a, .contact-card p {
-  font-size: 0.88rem; color: var(--text-secondary); text-decoration: none;
-  transition: color 0.3s;
-}
-.contact-card a:hover { color: var(--cyan); }
 
 /* ============================================================
    页脚 — 终端签名
@@ -870,14 +764,6 @@ body::after {
 }
 .project-card:hover {
   transform: translateY(-6px) rotateX(2deg);
-}
-
-/* ============================================================
-   粒子 Canvas
-   ============================================================ */
-#particles-canvas {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  z-index: -1; pointer-events: none;
 }
 
 /* ============================================================
@@ -1231,11 +1117,6 @@ body::after {
   opacity: 1; color: var(--cyan);
   text-shadow: 0 0 15px rgba(0,240,255,0.4);
 }
-#intro-explosion {
-  position: absolute; inset: 0; z-index: 4;
-  pointer-events: none; opacity: 0;
-}
-
 /* ═══════════════════════════════════════════════════════
    CRT 显示器外壳 — 纯文字展示用
    ═══════════════════════════════════════════════════════ */
@@ -1352,6 +1233,17 @@ body::after {
 .hero-reveal.show {
   opacity: 1 !important;
   transform: translateY(0);
+}
+
+/* 页面入场：overlay 消失后整体微上浮 */
+body.page-entered .navbar,
+body.page-entered .hero,
+body.page-entered section {
+  animation: pageEnter 0.8s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @media (prefers-reduced-motion: reduce) {

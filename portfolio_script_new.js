@@ -23,11 +23,12 @@ function initMouseGlow() {
 
   let mouseX = -999, mouseY = -999;
   let targetX = -999, targetY = -999;
+  let paused = false;
 
   document.addEventListener('mousemove', (e) => {
     targetX = e.clientX;
     targetY = e.clientY;
-    glow.style.opacity = '1';
+    if (!paused) glow.style.opacity = '1';
   });
 
   document.addEventListener('mouseleave', () => {
@@ -35,11 +36,16 @@ function initMouseGlow() {
   });
 
   document.addEventListener('mouseenter', () => {
-    glow.style.opacity = '1';
+    if (!paused) glow.style.opacity = '1';
   });
 
-  // Smooth follow with requestAnimationFrame
+  document.addEventListener('visibilitychange', () => {
+    paused = document.hidden;
+    if (paused) glow.style.opacity = '0';
+  });
+
   function smoothFollow() {
+    if (paused) { requestAnimationFrame(smoothFollow); return; }
     mouseX += (targetX - mouseX) * 0.08;
     mouseY += (targetY - mouseY) * 0.08;
     glow.style.left = mouseX + 'px';
@@ -137,23 +143,29 @@ function initScrollSpy() {
 }
 
 /* ============================================================
-   滚动渐入动画
+   滚动渐入动画 — 交错延时
    ============================================================ */
 function initScrollReveal() {
-  const observerOptions = { threshold: 0.15, rootMargin: '0px 0px -60px 0px' };
+  const observerOptions = { threshold: 0.12, rootMargin: '0px 0px -40px 0px' };
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
-        entry.target.style.opacity = '1';
-        entry.target.style.transform = 'translateY(0)';
+        const el = entry.target;
+        const idx = parseInt(el.dataset.revealIdx || '0');
+        el.style.transitionDelay = (idx * 60) + 'ms';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+        observer.unobserve(el);
       }
     });
   }, observerOptions);
 
-  document.querySelectorAll('.skill-card, .project-card, .contact-card, .info-item, .hero-stat').forEach(el => {
+  const targets = document.querySelectorAll('.skill-card, .project-card, .contact-card-v2, .hero-stat, .about-card');
+  targets.forEach((el, i) => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(30px)';
-    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+    el.style.transition = 'opacity 0.6s cubic-bezier(0.16,1,0.3,1), transform 0.6s cubic-bezier(0.16,1,0.3,1)';
+    el.dataset.revealIdx = i % 6;
     observer.observe(el);
   });
 }
@@ -445,7 +457,7 @@ function initIntroAnimation() {
 
   // ─── CRT 边框浮现 ───
   function showCRTFrameReveal() {
-    clearTimeout(forceEndTimer); // 动画正常完成，取消超时保护
+    clearTimeout(forceEndTimer);
     const crtFrame = document.getElementById('crt-container');
     if (crtFrame) {
       crtFrame.style.opacity = '0';
@@ -457,13 +469,11 @@ function initIntroAnimation() {
         });
       });
     }
-    // CRT 实体出现后启动文字
     setTimeout(() => {
       showCRTPlainText();
-      // 粒子消退后隐藏覆盖层
       setTimeout(() => {
         overlay.classList.add('hidden');
-        // 清理 particle canvas
+        document.body.classList.add('page-entered');
         if (particleCanvas) {
           particleCanvas.style.opacity = '0';
           particleCanvas.style.display = 'none';
