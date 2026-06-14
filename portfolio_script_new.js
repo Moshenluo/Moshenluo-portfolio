@@ -235,7 +235,7 @@ function initIntroAnimation() {
     if (heroReveal) heroReveal.classList.add('show');
     const termOut = document.getElementById('terminal-output');
     if (termOut && !termOut.children.length) showCRTPlainText();
-  }, 12000);
+  }, 8000);
 
   // ─── 第一阶段：矩阵雨 ───
   const mCtx = matrixCanvas.getContext('2d');
@@ -270,16 +270,15 @@ function initIntroAnimation() {
   }
   drawMatrix();
 
-  // 2.8秒后停止矩阵雨，进入第二阶段
+  // 2秒后停止矩阵雨，进入第二阶段
   setTimeout(() => {
     matrixRunning = false;
-    // 淡出过渡：约500ms内矩阵雨逐渐变暗
     let fadeFrames = 0;
     function fadeOutMatrix() {
-      mCtx.fillStyle = `rgba(0, 0, 0, ${0.08 + fadeFrames * 0.05})`;
+      mCtx.fillStyle = `rgba(0, 0, 0, ${0.08 + fadeFrames * 0.08})`;
       mCtx.fillRect(0, 0, mW, mH);
       fadeFrames++;
-      if (fadeFrames < 18) {
+      if (fadeFrames < 12) {
         requestAnimationFrame(fadeOutMatrix);
       } else {
         mCtx.fillStyle = 'rgba(0, 0, 0, 1)';
@@ -288,7 +287,7 @@ function initIntroAnimation() {
       }
     }
     fadeOutMatrix();
-  }, 2800);
+  }, 2000);
 
   // ─── 第二阶段：粒子汇聚成名字 → 散开 → 汇聚成 CRT 边框（弹簧物理版）───
   function initParticleConverge() {
@@ -323,8 +322,8 @@ function initIntroAnimation() {
       return pts;
     }
 
-    // 阶段
-    const PHASE = { BLOOM: 0, CONVERGE_NAME: 1, HOLD_NAME: 2, SCATTER: 3, CONVERGE_CRT: 4, HOLD_CRT: 5 };
+    // 阶段 — 精简：绽放 → 汇聚名字 → 短暂定格 → 直接变 CRT 边框
+    const PHASE = { BLOOM: 0, CONVERGE_NAME: 1, HOLD_NAME: 2, CONVERGE_CRT: 3, HOLD_CRT: 4 };
     let phase = PHASE.BLOOM;
     let phaseTimer = 0;
 
@@ -396,28 +395,18 @@ function initIntroAnimation() {
       pCtx.fillRect(0, 0, pW, pH);
       phaseTimer++;
 
-      // ── 阶段切换 ──
-      if (phase === PHASE.BLOOM && phaseTimer > 50) {
+      // ── 阶段切换（精简：名字 → CRT 直接过渡）──
+      if (phase === PHASE.BLOOM && phaseTimer > 30) {
         phase = PHASE.CONVERGE_NAME; phaseTimer = 0;
-        assignTargets(nameTargets, 0.05, 0.85);
-      } else if (phase === PHASE.CONVERGE_NAME && phaseTimer > 100) {
+        assignTargets(nameTargets, 0.06, 0.84);
+      } else if (phase === PHASE.CONVERGE_NAME && phaseTimer > 75) {
         phase = PHASE.HOLD_NAME; phaseTimer = 0;
-      } else if (phase === PHASE.HOLD_NAME && phaseTimer > 50) {
-        phase = PHASE.SCATTER; phaseTimer = 0;
-        // 受控散开：从中心向外螺旋展开
-        particles.forEach((p, i) => {
-          const angle = (i / particles.length) * Math.PI * 2 + phaseTimer * 0.02;
-          const dist = 180 + (i % 5) * 60;
-          p.tx = cx + Math.cos(angle) * dist;
-          p.ty = cy + Math.sin(angle) * dist;
-          p._k = 0.03;
-          p._d = 0.78;
-        });
-      } else if (phase === PHASE.SCATTER && phaseTimer > 50) {
+      } else if (phase === PHASE.HOLD_NAME && phaseTimer > 28) {
+        // 直接从名字过渡到 CRT 边框
         phase = PHASE.CONVERGE_CRT; phaseTimer = 0;
-        assignTargets(crtTargets, 0.04, 0.84);
-        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.3); });
-      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 90) {
+        assignTargets(crtTargets, 0.05, 0.83);
+        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.2); });
+      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 65) {
         phase = PHASE.HOLD_CRT; phaseTimer = 0;
         showCRTFrameReveal();
       }
@@ -438,9 +427,9 @@ function initIntroAnimation() {
         p.y += p.vy;
 
         // 正弦微动（代替随机抖动，更自然）
-        if (phase !== PHASE.SCATTER && phase !== PHASE.BLOOM) {
-          const wobble = Math.sin(phaseTimer * 0.15 + p.seed) * 0.8;
-          const wobble2 = Math.cos(phaseTimer * 0.12 + p.seed + 1) * 0.6;
+        if (phase !== PHASE.BLOOM) {
+          const wobble = Math.sin(phaseTimer * 0.18 + p.seed) * 0.8;
+          const wobble2 = Math.cos(phaseTimer * 0.14 + p.seed + 1) * 0.6;
           pCtx.beginPath();
           pCtx.arc(p.x + wobble, p.y + wobble2, p.size, 0, Math.PI * 2);
         } else {
@@ -451,25 +440,25 @@ function initIntroAnimation() {
         // 色相在 CRT 汇聚阶段渐变
         let hue = p.hue;
         if (phase === PHASE.CONVERGE_CRT) {
-          hue = p.hue + (phaseTimer / 90) * 15;
+          hue = p.hue + (phaseTimer / 65) * 15;
         }
         pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha})`;
         pCtx.fill();
 
         // 外层辉光
         pCtx.beginPath();
-        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 90) * 3) : p.size * 3.5;
+        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 65) * 3) : p.size * 3.5;
         pCtx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
         pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha * 0.07})`;
         pCtx.fill();
       });
 
       // HOLD_CRT 阶段消退
-      if (phase === PHASE.HOLD_CRT && phaseTimer > 45) {
-        pCtx.fillStyle = 'rgba(0,0,0,0.12)';
+      if (phase === PHASE.HOLD_CRT && phaseTimer > 25) {
+        pCtx.fillStyle = 'rgba(0,0,0,0.15)';
         pCtx.fillRect(0, 0, pW, pH);
-        if (phaseTimer > 65) {
-          particleCanvas.style.transition = 'opacity 0.5s';
+        if (phaseTimer > 35) {
+          particleCanvas.style.transition = 'opacity 0.4s';
           particleCanvas.style.opacity = '0';
           return;
         }
@@ -504,8 +493,8 @@ function initIntroAnimation() {
           particleCanvas.style.opacity = '0';
           particleCanvas.style.display = 'none';
         }
-      }, 800);
-    }, 400);
+      }, 500);
+    }, 300);
   }
 
   // 备用：如果 canvas 不可用
@@ -534,8 +523,8 @@ function showCRTPlainText() {
 
   const lines = [
     { type: 'name',   text: '唐翊杰',                              delay: 0   },
-    { type: 'role',   text: 'AI Native Product Builder｜数据科学硕士｜香港城市大学（东莞）', delay: 500 },
-    { type: 'status', text: '4+ AI 产品项目 · 3 段产品/数据实习 · 0→1 全流程落地',     delay: 900 },
+    { type: 'role',   text: 'AI Native Product Builder｜数据科学硕士｜香港城市大学（东莞）', delay: 400 },
+    { type: 'status', text: '4+ AI 产品项目 · 3 段产品/数据实习 · 0→1 全流程落地',     delay: 700 },
   ];
 
   let idx = 0;
@@ -544,7 +533,7 @@ function showCRTPlainText() {
       // 所有文字显示完毕，淡入 Hero 后续内容
       setTimeout(() => {
         if (reveal) reveal.classList.add('show');
-      }, 600);
+      }, 400);
       return;
     }
 
