@@ -4,7 +4,7 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initIntroAnimation();   // 开场动画（含矩阵雨 + 粒子 + 爆炸）
+  initIntroAnimation();
   initMouseGlow();
   initMobileNav();
   initSmoothScroll();
@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initBackToTop();
   initProjectFilters();
+  initHeroCountUp();
 });
 
 /* ============================================================
@@ -119,27 +120,34 @@ function initSmoothScroll() {
 }
 
 /* ============================================================
-   滚动监听 — 导航高亮 + 导航栏效果
+   滚动监听 — 导航高亮 + 导航栏效果 (RAF 节流)
    ============================================================ */
 function initScrollSpy() {
   const navbar = document.querySelector('.navbar');
   const sections = document.querySelectorAll('section[id]');
   const navItems = document.querySelectorAll('.nav-links a');
 
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) navbar.classList.add('scrolled');
-    else navbar.classList.remove('scrolled');
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
 
-    let currentId = '';
-    sections.forEach(section => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= 100 && rect.bottom >= 100) currentId = section.id;
-    });
-    navItems.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href') === `#${currentId}`) link.classList.add('active');
-    });
-  });
+        let currentId = '';
+        sections.forEach(section => {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= 100 && rect.bottom >= 100) currentId = section.id;
+        });
+        navItems.forEach(link => {
+          link.classList.remove('active');
+          if (link.getAttribute('href') === `#${currentId}`) link.classList.add('active');
+        });
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
 }
 
 /* ============================================================
@@ -171,15 +179,21 @@ function initScrollReveal() {
 }
 
 /* ============================================================
-   返回顶部按钮
+   返回顶部按钮 (RAF 节流)
    ============================================================ */
 function initBackToTop() {
   const btn = document.getElementById('backToTop');
   if (!btn) return;
+  let ticking = false;
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 500) btn.classList.add('visible');
-    else btn.classList.remove('visible');
-  });
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        btn.classList.toggle('visible', window.scrollY > 500);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }, { passive: true });
   btn.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -259,9 +273,21 @@ function initIntroAnimation() {
   // 2.8秒后停止矩阵雨，进入第二阶段
   setTimeout(() => {
     matrixRunning = false;
-    mCtx.fillStyle = 'rgba(0, 0, 0, 1)';
-    mCtx.fillRect(0, 0, mW, mH);
-    initParticleConverge();
+    // 淡出过渡：约500ms内矩阵雨逐渐变暗
+    let fadeFrames = 0;
+    function fadeOutMatrix() {
+      mCtx.fillStyle = `rgba(0, 0, 0, ${0.08 + fadeFrames * 0.05})`;
+      mCtx.fillRect(0, 0, mW, mH);
+      fadeFrames++;
+      if (fadeFrames < 18) {
+        requestAnimationFrame(fadeOutMatrix);
+      } else {
+        mCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+        mCtx.fillRect(0, 0, mW, mH);
+        initParticleConverge();
+      }
+    }
+    fadeOutMatrix();
   }, 2800);
 
   // ─── 第二阶段：粒子汇聚成名字 → 散开 → 汇聚成 CRT 边框（弹簧物理版）───
@@ -561,4 +587,41 @@ function showPage() {
   if (overlay) overlay.style.display = 'none';
   const reveal = document.getElementById('hero-reveal');
   if (reveal) reveal.classList.add('show');
+}
+
+/* ═══════════════════════════════════════════════════════
+     Hero 数据面板数字滚动动画
+     ═══════════════════════════════════════════════════════ */
+function initHeroCountUp() {
+  const stats = document.querySelectorAll('.hero-stat .number');
+  if (!stats.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const raw = el.textContent;
+      // 纯数字如 "4+" 提取 4
+      const numMatch = raw.match(/[\d.]+/);
+      if (!numMatch) return;
+      const target = parseFloat(numMatch[0]);
+      const suffix = raw.replace(numMatch[0], '');
+      const duration = 1200;
+      const start = performance.now();
+
+      function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        // easeOutCubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.round(target * eased);
+        el.textContent = current + suffix;
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+      observer.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+
+  stats.forEach(s => observer.observe(s));
 }
