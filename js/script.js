@@ -252,207 +252,188 @@ function initIntroAnimation() {
     initParticleConverge();
   }, 2800);
 
-  // ─── 第二阶段：粒子汇聚成名字 → 散开 → 汇聚成 CRT 边框 ───
+  // ─── 第二阶段：粒子汇聚成名字 → 散开 → 汇聚成 CRT 边框（弹簧物理版）───
   function initParticleConverge() {
     if (!particleCanvas) { showNameDirectly(); return; }
     const pCtx = particleCanvas.getContext('2d');
-    let pW, pH;
+    let pW, pH, cx, cy;
     function resizeP() {
       pW = particleCanvas.width = window.innerWidth;
       pH = particleCanvas.height = window.innerHeight;
+      cx = pW / 2;
+      cy = pH / 2;
     }
     resizeP();
     window.addEventListener('resize', resizeP);
 
-    // 生成 CRT 边框目标点阵（矩形边框）
+    // 缓动函数
+    const ease = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const easeOutBack = (t) => { const c1 = 1.70158; const c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+
+    // 生成 CRT 边框目标点阵
     function genCRTFramePoints() {
       const pts = [];
-      const cw = Math.min(750, pW * 0.78);   // CRT 宽度
-      const ch = Math.min(320, pH * 0.50);    // CRT 高度
-      const cx = pW / 2;                       // 中心 X
-      const cy = pH / 2 - 20;                  // 中心 Y（略偏上）
+      const cw = Math.min(750, pW * 0.78);
+      const ch = Math.min(320, pH * 0.50);
+      const cenX = cx;
+      const cenY = cy - 20;
       const hw = cw / 2;
       const hh = ch / 2;
-      const step = 6;                           // 采样间隔
-      // 上边
-      for (let x = cx - hw; x <= cx + hw; x += step) pts.push({ x, y: cy - hh });
-      // 下边
-      for (let x = cx - hw; x <= cx + hw; x += step) pts.push({ x, y: cy + hh });
-      // 左边
-      for (let y = cy - hh + step; y < cy + hh; y += step) pts.push({ x: cx - hw, y });
-      // 右边
-      for (let y = cy - hh + step; y < cy + hh; y += step) pts.push({ x: cx + hw, y });
-      // 四个圆角（简化：角部像素）
-      const cr = 16; // 圆角半径
-      const corners = [
-        { sx: cx - hw + cr, sy: cy - hh + cr },
-        { sx: cx + hw - cr, sy: cy - hh + cr },
-        { sx: cx - hw + cr, sy: cy + hh - cr },
-        { sx: cx + hw - cr, sy: cy + hh - cr }
-      ];
-      corners.forEach(({ sx, sy }) => {
-        // 在圆角区域采样
-        for (let dy = -cr; dy <= cr; dy += step) {
-          for (let dx = -cr; dx <= cr; dx += step) {
-            if (dx * dx + dy * dy <= cr * cr) {
-              pts.push({ x: sx + dx, y: sy + dy });
-            }
-          }
-        }
-      });
+      const step = 5;
+      for (let x = cenX - hw; x <= cenX + hw; x += step) { pts.push({ x, y: cenY - hh }); pts.push({ x, y: cenY + hh }); }
+      for (let y = cenY - hh + step; y < cenY + hh; y += step) { pts.push({ x: cenX - hw, y }); pts.push({ x: cenX + hw, y }); }
       return pts;
     }
 
-    // 阶段枚举
-    const PHASE = { CONVERGE_NAME: 0, HOLD_NAME: 1, SCATTER: 2, CONVERGE_CRT: 3, HOLD_CRT: 4 };
-    let phase = PHASE.CONVERGE_NAME;
+    // 阶段
+    const PHASE = { BLOOM: 0, CONVERGE_NAME: 1, HOLD_NAME: 2, SCATTER: 3, CONVERGE_CRT: 4, HOLD_CRT: 5 };
+    let phase = PHASE.BLOOM;
     let phaseTimer = 0;
 
-    // ── 生成名字目标点阵 ──
+    // ── 名字目标点阵 ──
     const nameTargets = [];
     const tmpCanvas = document.createElement('canvas');
     const tmpCtx = tmpCanvas.getContext('2d');
     tmpCanvas.width = 900;
     tmpCanvas.height = 200;
-    tmpCtx.font = '900 110px "Space Grotesk", sans-serif';
+    tmpCtx.font = '900 140px "Space Grotesk", sans-serif';
     tmpCtx.textAlign = 'center';
     tmpCtx.textBaseline = 'middle';
     tmpCtx.fillStyle = '#fff';
-    tmpCtx.fillText('唐翊杰', 450, 100);
-
+    tmpCtx.fillText('唐翊杰', 450, 105);
     const imgData = tmpCtx.getImageData(0, 0, 900, 200);
-    for (let y = 0; y < 200; y += 5) {
-      for (let x = 0; x < 900; x += 5) {
-        const idx = (y * 900 + x) * 4;
-        if (imgData.data[idx + 3] > 128) {
-          nameTargets.push({
-            x: (x - 450) * (pW / 900) + pW / 2,
-            y: (y - 100) * (pH / 500) + pH / 2
-          });
+    for (let y = 0; y < 200; y += 4) {
+      for (let x = 0; x < 900; x += 4) {
+        if (imgData.data[(y * 900 + x) * 4 + 3] > 128) {
+          nameTargets.push({ x: (x - 450) * (pW / 900) + cx, y: (y - 100) * (pH / 500) + cy - 30 });
         }
       }
     }
-
-    // 如果点太少，用圆形备用
     if (nameTargets.length < 50) {
       for (let i = 0; i < 300; i++) {
-        const angle = (i / 300) * Math.PI * 2;
-        const r = 120;
-        nameTargets.push({
-          x: Math.cos(angle) * r + pW / 2,
-          y: Math.sin(angle) * r + pH / 2 - 30
-        });
+        const a = (i / 300) * Math.PI * 2;
+        nameTargets.push({ x: Math.cos(a) * 120 + cx, y: Math.sin(a) * 120 + cy - 30 });
       }
     }
 
-    // ── 生成 CRT 边框目标点阵 ──
+    // ── CRT 目标 ──
     const crtTargets = genCRTFramePoints();
 
-    // ── 创建粒子 ──
+    // ── 创建粒子（弹簧物理模型）──
     const particles = [];
     const PARTICLE_COUNT = Math.min(Math.max(nameTargets.length, crtTargets.length), 500);
+    const STIFFNESS = 0.06;
+    const DAMPING = 0.82;
+    const WOBBLE_PERIOD = 200;
+
     for (let i = 0; i < PARTICLE_COUNT; i++) {
+      const nt = nameTargets[i % nameTargets.length];
+      const jitter = (Math.random() - 0.5) * 8;
       particles.push({
-        x: Math.random() * pW,
-        y: Math.random() * pH,
-        // 初始目标：名字形状
-        tx: nameTargets[i % nameTargets.length].x + (Math.random() - 0.5) * 30,
-        ty: nameTargets[i % nameTargets.length].y + (Math.random() - 0.5) * 30,
-        size: 1.5 + Math.random() * 2,
+        x: cx + (Math.random() - 0.5) * 40,
+        y: cy + (Math.random() - 0.5) * 40,
+        vx: 0,
+        vy: 0,
+        tx: nt.x + jitter,
+        ty: nt.y + jitter,
+        size: 1.2 + Math.random() * 2.2,
         hue: Math.random() > 0.5 ? 190 : 275,
-        alpha: 0.6 + Math.random() * 0.4,
-        speed: 0.02 + Math.random() * 0.03
+        alpha: 0.55 + Math.random() * 0.45,
+        seed: Math.random() * 100
       });
     }
 
-    function assignTargets(targetArr) {
+    function assignTargets(targetArr, stiffness, damping) {
       particles.forEach((p, i) => {
         const t = targetArr[i % targetArr.length];
-        p.tx = t.x + (Math.random() - 0.5) * 12;
-        p.ty = t.y + (Math.random() - 0.5) * 12;
-        p.speed = 0.03 + Math.random() * 0.04;
+        p.tx = t.x + (Math.random() - 0.5) * 6;
+        p.ty = t.y + (Math.random() - 0.5) * 6;
+        p._k = stiffness || STIFFNESS;
+        p._d = damping || DAMPING;
       });
     }
 
     function animateParticles() {
-      pCtx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      pCtx.fillStyle = 'rgba(0, 0, 0, 0.06)';
       pCtx.fillRect(0, 0, pW, pH);
       phaseTimer++;
 
-      // ── 阶段切换逻辑 ──
-      const HOLD_DURATION = 40;      // 名字保持帧数
-      const SCATTER_DURATION = 30;   // 散开帧数
-      const CRT_HOLD_DURATION = 50;  // CRT 保持帧数
-
-      if (phase === PHASE.CONVERGE_NAME && phaseTimer > 90) {
-        // 名字汇聚完成 → 保持一下
-        phase = PHASE.HOLD_NAME;
-        phaseTimer = 0;
-      } else if (phase === PHASE.HOLD_NAME && phaseTimer > HOLD_DURATION) {
-        // 保持结束 → 散开
-        phase = PHASE.SCATTER;
-        phaseTimer = 0;
-        // 散开目标：随机远点
-        particles.forEach(p => {
-          const angle = Math.random() * Math.PI * 2;
-          const dist = 200 + Math.random() * 400;
-          p.tx = p.x + Math.cos(angle) * dist;
-          p.ty = p.y + Math.sin(angle) * dist;
-          p.speed = 0.06 + Math.random() * 0.06;
-          p.alpha *= 0.6;
+      // ── 阶段切换 ──
+      if (phase === PHASE.BLOOM && phaseTimer > 50) {
+        phase = PHASE.CONVERGE_NAME; phaseTimer = 0;
+        assignTargets(nameTargets, 0.05, 0.85);
+      } else if (phase === PHASE.CONVERGE_NAME && phaseTimer > 100) {
+        phase = PHASE.HOLD_NAME; phaseTimer = 0;
+      } else if (phase === PHASE.HOLD_NAME && phaseTimer > 50) {
+        phase = PHASE.SCATTER; phaseTimer = 0;
+        // 受控散开：从中心向外螺旋展开
+        particles.forEach((p, i) => {
+          const angle = (i / particles.length) * Math.PI * 2 + phaseTimer * 0.02;
+          const dist = 180 + (i % 5) * 60;
+          p.tx = cx + Math.cos(angle) * dist;
+          p.ty = cy + Math.sin(angle) * dist;
+          p._k = 0.03;
+          p._d = 0.78;
         });
-      } else if (phase === PHASE.SCATTER && phaseTimer > SCATTER_DURATION) {
-        // 散开完成 → 汇聚成 CRT 边框
-        phase = PHASE.CONVERGE_CRT;
-        phaseTimer = 0;
-        assignTargets(crtTargets);
-        particles.forEach(p => { p.alpha = 0.6 + Math.random() * 0.4; });
-      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 80) {
-        // CRT 边框汇聚完成 → 保持并显示真实 CRT
-        phase = PHASE.HOLD_CRT;
-        phaseTimer = 0;
-        // 显示 CRT 实体
+      } else if (phase === PHASE.SCATTER && phaseTimer > 50) {
+        phase = PHASE.CONVERGE_CRT; phaseTimer = 0;
+        assignTargets(crtTargets, 0.04, 0.84);
+        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.3); });
+      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 90) {
+        phase = PHASE.HOLD_CRT; phaseTimer = 0;
         showCRTFrameReveal();
       }
 
-      // ── 粒子运动 ──
+      // ── 弹簧物理运动 ──
       particles.forEach(p => {
+        const k = p._k || STIFFNESS;
+        const d = p._d || DAMPING;
         const dx = p.tx - p.x;
         const dy = p.ty - p.y;
-        p.x += dx * p.speed;
-        p.y += dy * p.speed;
 
-        // 接近目标时微抖动
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 8 && phase !== PHASE.SCATTER) {
-          p.x += (Math.random() - 0.5) * 1.5;
-          p.y += (Math.random() - 0.5) * 1.5;
+        // 弹簧力 + 阻尼
+        p.vx += dx * k;
+        p.vy += dy * k;
+        p.vx *= d;
+        p.vy *= d;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // 正弦微动（代替随机抖动，更自然）
+        if (phase !== PHASE.SCATTER && phase !== PHASE.BLOOM) {
+          const wobble = Math.sin(phaseTimer * 0.15 + p.seed) * 0.8;
+          const wobble2 = Math.cos(phaseTimer * 0.12 + p.seed + 1) * 0.6;
+          pCtx.beginPath();
+          pCtx.arc(p.x + wobble, p.y + wobble2, p.size, 0, Math.PI * 2);
+        } else {
+          pCtx.beginPath();
+          pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         }
 
-        const progress = Math.min(phaseTimer / 60, 1);
-        const glow = phase === PHASE.CONVERGE_CRT ? 1 + progress * 0.5 : 1;
-
-        pCtx.beginPath();
-        pCtx.arc(p.x, p.y, p.size * glow, 0, Math.PI * 2);
-        pCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.alpha})`;
+        // 色相在 CRT 汇聚阶段渐变
+        let hue = p.hue;
+        if (phase === PHASE.CONVERGE_CRT) {
+          hue = p.hue + (phaseTimer / 90) * 15;
+        }
+        pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha})`;
         pCtx.fill();
 
-        // 霓虹发光
+        // 外层辉光
         pCtx.beginPath();
-        pCtx.arc(p.x, p.y, p.size * 4, 0, Math.PI * 2);
-        pCtx.fillStyle = `hsla(${p.hue}, 100%, 70%, ${p.alpha * 0.08 * glow})`;
+        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 90) * 3) : p.size * 3.5;
+        pCtx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
+        pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha * 0.07})`;
         pCtx.fill();
       });
 
-      // 到达 HOLD_CRT 阶段后继续渲染几帧再停止
-      if (phase === PHASE.HOLD_CRT && phaseTimer > CRT_HOLD_DURATION) {
-        // 粒子消退
-        pCtx.fillStyle = 'rgba(0,0,0,0.15)';
+      // HOLD_CRT 阶段消退
+      if (phase === PHASE.HOLD_CRT && phaseTimer > 45) {
+        pCtx.fillStyle = 'rgba(0,0,0,0.12)';
         pCtx.fillRect(0, 0, pW, pH);
-        if (phaseTimer > CRT_HOLD_DURATION + 20) {
-          particleCanvas.style.transition = 'opacity 0.6s';
+        if (phaseTimer > 65) {
+          particleCanvas.style.transition = 'opacity 0.5s';
           particleCanvas.style.opacity = '0';
-          return; // 停止粒子循环
+          return;
         }
       }
 
