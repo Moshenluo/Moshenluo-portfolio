@@ -524,7 +524,7 @@ function showCRTPlainText() {
   const lines = [
     { type: 'name',   text: '唐翊杰',                              delay: 0   },
     { type: 'role',   text: 'AI Native Product Builder｜数据科学硕士｜香港城市大学（东莞）', delay: 400 },
-    { type: 'status', text: '4+ AI 产品项目 · 3 段产品/数据实习 · 0→1 全流程落地',     delay: 700 },
+    { type: 'status', text: '5+ AI 产品项目 · 3 段产品/数据实习 · 0→1 全流程落地',     delay: 700 },
   ];
 
   let idx = 0;
@@ -590,7 +590,7 @@ function initHeroCountUp() {
       if (!entry.isIntersecting) return;
       const el = entry.target;
       const raw = el.textContent;
-      // 纯数字如 "4+" 提取 4
+      // 纯数字如 "5+" 提取 4
       const numMatch = raw.match(/[\d.]+/);
       if (!numMatch) return;
       const target = parseFloat(numMatch[0]);
