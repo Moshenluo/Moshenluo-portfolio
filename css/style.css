@@ -1081,41 +1081,7 @@ body::after {
 #matrix-canvas {
   position: absolute; inset: 0; z-index: 1;
 }
-#particle-canvas {
-  position: absolute; inset: 0; z-index: 2;
-}
-#intro-text-container {
-  position: relative; z-index: 3;
-  text-align: center; pointer-events: none;
-}
-.intro-name-hidden {
-  font-family: var(--font-sans);
-  font-size: clamp(3rem, 10vw, 7rem);
-  font-weight: 900;
-  letter-spacing: 8px;
-  opacity: 0; color: #fff;
-  text-shadow: 0 0 40px rgba(0,240,255,0.5);
-  transition: opacity 0.6s ease, transform 0.6s ease, text-shadow 0.6s ease;
-  transform: scale(0.5);
-}
-.intro-name-visible {
-  opacity: 1; transform: scale(1);
-  text-shadow:
-    0 0 20px var(--cyan),
-    0 0 60px rgba(0,240,255,0.4),
-    0 0 120px rgba(180,0,255,0.3);
-}
-.intro-role-hidden {
-  font-family: var(--font-mono);
-  font-size: clamp(0.9rem, 2.5vw, 1.5rem);
-  color: var(--text-dim);
-  margin-top: 1rem; opacity: 0;
-  transition: opacity 0.8s ease 0.3s, color 0.8s ease;
-}
-.intro-role-visible {
-  opacity: 1; color: var(--cyan);
-  text-shadow: 0 0 15px rgba(0,240,255,0.4);
-}
+
 /* ═══════════════════════════════════════════════════════
    CRT 显示器外壳 — 纯文字展示用
    ═══════════════════════════════════════════════════════ */
