@@ -205,44 +205,33 @@ function initBackToTop() {
 }
 
 /* ═══════════════════════════════════════════════════════
-     开场动画 — 矩阵雨 → 粒子汇聚 → 霓虹爆炸 → CRT纯文字
+     开场动画 — 矩阵雨 → CRT 浮现 → 文字逐行淡入
      ═══════════════════════════════════════════════════════ */
 function initIntroAnimation() {
   const overlay = document.getElementById('intro-overlay');
   const matrixCanvas = document.getElementById('matrix-canvas');
-  const particleCanvas = document.getElementById('particle-canvas');
-  const introName = document.getElementById('intro-name');
-  const introRole = document.getElementById('intro-role');
-  const crtContainer = document.getElementById('crt-container');
-  const terminalOutput = document.getElementById('terminal-output');
   const heroReveal = document.getElementById('hero-reveal');
 
-  // ── 移动端检测：UA + 屏幕宽度双保险 ──
   const uaMobile = /Android|iPhone|iPad|iPod|Mobile|Phone|Tablet/i.test(navigator.userAgent);
   const widthMobile = window.innerWidth < 768;
   const isMobile = uaMobile || widthMobile;
 
   if (isMobile) {
-    // 移动端：直接隐藏 overlay，内容已在 CSS 中默认可见
     if (overlay) { overlay.style.display = 'none'; overlay.style.visibility = 'hidden'; }
     if (heroReveal) heroReveal.classList.add('show');
-    // 清除可能残留的 canvas 动画
-    if (matrixCanvas) { matrixCanvas.style.display = 'none'; }
-    if (particleCanvas) { particleCanvas.style.display = 'none'; }
+    if (matrixCanvas) matrixCanvas.style.display = 'none';
     return;
   }
 
   if (!overlay || !matrixCanvas) { showPage(); return; }
 
-  // ── 桌面端：全局超时保护 12 秒 ──
   const forceEndTimer = setTimeout(() => {
     if (overlay) { overlay.style.transition = 'none'; overlay.style.display = 'none'; }
     if (heroReveal) heroReveal.classList.add('show');
-    const termOut = document.getElementById('terminal-output');
-    if (termOut && !termOut.children.length) showCRTPlainText();
-  }, 8000);
+    showCRTPlainText();
+  }, 6000);
 
-  // ─── 第一阶段：矩阵雨 ───
+  // ── 矩阵雨 ──
   const mCtx = matrixCanvas.getContext('2d');
   let mW, mH;
   function resizeMatrix() {
@@ -252,12 +241,12 @@ function initIntroAnimation() {
   resizeMatrix();
   window.addEventListener('resize', resizeMatrix);
 
-  const matrixChars = 'アイウエオカキクケコ0123456789ABCDEF唐翊杰AI01010110';
+  const matrixChars = 'アイウエオカキクケコ0123456789ABCDEF';
   const fontSize = 15;
   let columns = Math.floor(mW / fontSize);
   let drops = Array(columns).fill(1);
-
   let matrixRunning = true;
+
   function drawMatrix() {
     if (!matrixRunning) return;
     mCtx.fillStyle = 'rgba(0, 0, 0, 0.06)';
@@ -265,8 +254,7 @@ function initIntroAnimation() {
     mCtx.font = fontSize + 'px monospace';
     for (let i = 0; i < drops.length; i++) {
       const ch = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-      const alpha = 0.3 + Math.random() * 0.7;
-      mCtx.fillStyle = `rgba(0, 240, 255, ${alpha})`;
+      mCtx.fillStyle = `rgba(0, 240, 255, ${0.3 + Math.random() * 0.7})`;
       mCtx.fillText(ch, i * fontSize, drops[i] * fontSize);
       if (drops[i] * fontSize > mH && Math.random() > 0.975) drops[i] = 0;
       drops[i]++;
@@ -275,234 +263,45 @@ function initIntroAnimation() {
   }
   drawMatrix();
 
-  // 2秒后停止矩阵雨，进入第二阶段
+  // 2.5s 后矩阵雨淡出
   setTimeout(() => {
     matrixRunning = false;
     let fadeFrames = 0;
     function fadeOutMatrix() {
-      mCtx.fillStyle = `rgba(0, 0, 0, ${0.08 + fadeFrames * 0.08})`;
+      mCtx.fillStyle = `rgba(0, 0, 0, ${0.06 + fadeFrames * 0.06})`;
       mCtx.fillRect(0, 0, mW, mH);
       fadeFrames++;
-      if (fadeFrames < 12) {
+      if (fadeFrames < 14) {
         requestAnimationFrame(fadeOutMatrix);
       } else {
+        // 全黑，然后 CRT 浮现
         mCtx.fillStyle = 'rgba(0, 0, 0, 1)';
         mCtx.fillRect(0, 0, mW, mH);
-        initParticleConverge();
+        revealCRT();
       }
     }
     fadeOutMatrix();
-  }, 2000);
+  }, 2500);
 
-  // ─── 第二阶段：粒子汇聚成名字 → 散开 → 汇聚成 CRT 边框（弹簧物理版）───
-  function initParticleConverge() {
-    if (!particleCanvas) { showNameDirectly(); return; }
-    const pCtx = particleCanvas.getContext('2d');
-    let pW, pH, cx, cy;
-    function resizeP() {
-      pW = particleCanvas.width = window.innerWidth;
-      pH = particleCanvas.height = window.innerHeight;
-      cx = pW / 2;
-      cy = pH / 2;
-    }
-    resizeP();
-    window.addEventListener('resize', resizeP);
-
-    // 缓动函数
-    const ease = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-
-    // 生成 CRT 边框目标点阵
-    function genCRTFramePoints() {
-      const pts = [];
-      const cw = Math.min(750, pW * 0.78);
-      const ch = Math.min(320, pH * 0.50);
-      const cenX = cx;
-      const cenY = cy - 20;
-      const hw = cw / 2;
-      const hh = ch / 2;
-      const step = 5;
-      for (let x = cenX - hw; x <= cenX + hw; x += step) { pts.push({ x, y: cenY - hh }); pts.push({ x, y: cenY + hh }); }
-      for (let y = cenY - hh + step; y < cenY + hh; y += step) { pts.push({ x: cenX - hw, y }); pts.push({ x: cenX + hw, y }); }
-      return pts;
-    }
-
-    // 阶段 — 极致精简：汇聚名字 → 直接变 CRT
-    const PHASE = { CONVERGE_NAME: 0, CONVERGE_CRT: 1, HOLD_CRT: 2 };
-    let phase = PHASE.CONVERGE_NAME;
-    let phaseTimer = 0;
-
-    // ── 名字目标点阵 ──
-    const nameTargets = [];
-    const tmpCanvas = document.createElement('canvas');
-    const tmpCtx = tmpCanvas.getContext('2d');
-    tmpCanvas.width = 900;
-    tmpCanvas.height = 200;
-    tmpCtx.font = '900 140px "Space Grotesk", sans-serif';
-    tmpCtx.textAlign = 'center';
-    tmpCtx.textBaseline = 'middle';
-    tmpCtx.fillStyle = '#fff';
-    tmpCtx.fillText('唐翊杰', 450, 105);
-    const imgData = tmpCtx.getImageData(0, 0, 900, 200);
-    for (let y = 0; y < 200; y += 4) {
-      for (let x = 0; x < 900; x += 4) {
-        if (imgData.data[(y * 900 + x) * 4 + 3] > 128) {
-          nameTargets.push({ x: (x - 450) * (pW / 900) + cx, y: (y - 100) * (pH / 500) + cy - 30 });
-        }
-      }
-    }
-    if (nameTargets.length < 50) {
-      for (let i = 0; i < 300; i++) {
-        const a = (i / 300) * Math.PI * 2;
-        nameTargets.push({ x: Math.cos(a) * 120 + cx, y: Math.sin(a) * 120 + cy - 30 });
-      }
-    }
-
-    // ── CRT 目标 ──
-    const crtTargets = genCRTFramePoints();
-
-    // ── 创建粒子（弹簧物理模型）──
-    const particles = [];
-    const PARTICLE_COUNT = Math.min(Math.max(nameTargets.length, crtTargets.length), 500);
-    const STIFFNESS = 0.06;
-    const DAMPING = 0.82;
-    const WOBBLE_PERIOD = 200;
-
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      const nt = nameTargets[i % nameTargets.length];
-      const jitter = (Math.random() - 0.5) * 8;
-      particles.push({
-        x: cx + (Math.random() - 0.5) * 40,
-        y: cy + (Math.random() - 0.5) * 40,
-        vx: 0,
-        vy: 0,
-        tx: nt.x + jitter,
-        ty: nt.y + jitter,
-        size: 1.2 + Math.random() * 2.2,
-        hue: Math.random() > 0.5 ? 190 : 275,
-        alpha: 0.55 + Math.random() * 0.45,
-        seed: Math.random() * 100
-      });
-    }
-
-    function assignTargets(targetArr, stiffness, damping) {
-      particles.forEach((p, i) => {
-        const t = targetArr[i % targetArr.length];
-        p.tx = t.x + (Math.random() - 0.5) * 6;
-        p.ty = t.y + (Math.random() - 0.5) * 6;
-        p._k = stiffness || STIFFNESS;
-        p._d = damping || DAMPING;
-      });
-    }
-
-    function animateParticles() {
-      pCtx.fillStyle = 'rgba(0, 0, 0, 0.06)';
-      pCtx.fillRect(0, 0, pW, pH);
-      phaseTimer++;
-
-      // ── 阶段切换（名字 → CRT 无缝过渡）──
-      if (phase === PHASE.CONVERGE_NAME && phaseTimer > 80) {
-        phase = PHASE.CONVERGE_CRT; phaseTimer = 0;
-        assignTargets(crtTargets, 0.05, 0.82);
-        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.15); });
-      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 60) {
-        phase = PHASE.HOLD_CRT; phaseTimer = 0;
-        showCRTFrameReveal();
-      }
-
-      // ── 弹簧物理运动 ──
-      particles.forEach(p => {
-        const k = p._k || STIFFNESS;
-        const d = p._d || DAMPING;
-        const dx = p.tx - p.x;
-        const dy = p.ty - p.y;
-
-        // 弹簧力 + 阻尼
-        p.vx += dx * k;
-        p.vy += dy * k;
-        p.vx *= d;
-        p.vy *= d;
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // 正弦微动
-        if (phase !== PHASE.CONVERGE_NAME || phaseTimer > 15) {
-          const wobble = Math.sin(phaseTimer * 0.18 + p.seed) * 0.8;
-          const wobble2 = Math.cos(phaseTimer * 0.14 + p.seed + 1) * 0.6;
-          pCtx.beginPath();
-          pCtx.arc(p.x + wobble, p.y + wobble2, p.size, 0, Math.PI * 2);
-        } else {
-          pCtx.beginPath();
-          pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        }
-
-        let hue = p.hue;
-        if (phase === PHASE.CONVERGE_CRT) {
-          hue = p.hue + (phaseTimer / 60) * 15;
-        }
-        pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha})`;
-        pCtx.fill();
-
-        pCtx.beginPath();
-        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 60) * 3) : p.size * 3.5;
-        pCtx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
-        pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha * 0.07})`;
-        pCtx.fill();
-      });
-
-      if (phase === PHASE.HOLD_CRT && phaseTimer > 20) {
-        pCtx.fillStyle = 'rgba(0,0,0,0.15)';
-        pCtx.fillRect(0, 0, pW, pH);
-        if (phaseTimer > 30) {
-          particleCanvas.style.transition = 'opacity 0.4s';
-          particleCanvas.style.opacity = '0';
-          return;
-        }
-      }
-
-      requestAnimationFrame(animateParticles);
-    }
-
-    animateParticles();
-  }
-
-  // ─── CRT 边框浮现 ───
-  function showCRTFrameReveal() {
+  // ── CRT 浮现 + 文字 → 隐藏 overlay ──
+  function revealCRT() {
     clearTimeout(forceEndTimer);
     const crtFrame = document.getElementById('crt-container');
     if (crtFrame) {
       crtFrame.style.opacity = '0';
-      crtFrame.style.transition = 'opacity 0.6s ease';
+      crtFrame.style.transition = 'opacity 0.5s ease';
       crtFrame.style.display = 'block';
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          crtFrame.style.opacity = '1';
-        });
+        requestAnimationFrame(() => { crtFrame.style.opacity = '1'; });
       });
     }
-    setTimeout(() => {
-      showCRTPlainText();
-      setTimeout(() => {
-        overlay.classList.add('hidden');
-        document.body.classList.add('page-entered');
-        if (particleCanvas) {
-          particleCanvas.style.opacity = '0';
-          particleCanvas.style.display = 'none';
-        }
-      }, 500);
-    }, 300);
-  }
-
-  // 备用：如果 canvas 不可用
-  function showNameDirectly() {
-    if (introName) {
-      introName.classList.remove('intro-name-hidden');
-      introName.classList.add('intro-name-visible');
-    }
+    setTimeout(() => showCRTPlainText(), 400);
     setTimeout(() => {
       overlay.classList.add('hidden');
-      setTimeout(() => showCRTPlainText(), 900);
-    }, 1500);
+      document.body.classList.add('page-entered');
+    }, 1200);
   }
+
 }
 
 /* ═══════════════════════════════════════════════════════
