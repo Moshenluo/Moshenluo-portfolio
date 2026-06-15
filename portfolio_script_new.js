@@ -68,19 +68,24 @@ function initProjectFilters() {
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Update active state
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       const filter = btn.dataset.filter;
 
-      projectCards.forEach(card => {
-        if (filter === 'all' || card.dataset.category === filter) {
-          card.classList.remove('filter-hide');
-        } else {
-          card.classList.add('filter-hide');
-        }
-      });
+      // 先统一淡出
+      projectCards.forEach(card => { card.style.opacity = '0'; card.style.transform = 'scale(0.95)'; });
+
+      setTimeout(() => {
+        projectCards.forEach(card => {
+          if (filter === 'all' || card.dataset.category === filter) {
+            card.classList.remove('filter-hide');
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+          } else {
+            card.classList.add('filter-hide');
+          }
+        });
+      }, 200);
     });
   });
 }
@@ -305,7 +310,6 @@ function initIntroAnimation() {
 
     // 缓动函数
     const ease = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    const easeOutBack = (t) => { const c1 = 1.70158; const c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
 
     // 生成 CRT 边框目标点阵
     function genCRTFramePoints() {
@@ -322,9 +326,9 @@ function initIntroAnimation() {
       return pts;
     }
 
-    // 阶段 — 精简：绽放 → 汇聚名字 → 短暂定格 → 直接变 CRT 边框
-    const PHASE = { BLOOM: 0, CONVERGE_NAME: 1, HOLD_NAME: 2, CONVERGE_CRT: 3, HOLD_CRT: 4 };
-    let phase = PHASE.BLOOM;
+    // 阶段 — 极致精简：汇聚名字 → 直接变 CRT
+    const PHASE = { CONVERGE_NAME: 0, CONVERGE_CRT: 1, HOLD_CRT: 2 };
+    let phase = PHASE.CONVERGE_NAME;
     let phaseTimer = 0;
 
     // ── 名字目标点阵 ──
@@ -395,18 +399,12 @@ function initIntroAnimation() {
       pCtx.fillRect(0, 0, pW, pH);
       phaseTimer++;
 
-      // ── 阶段切换（精简：名字 → CRT 直接过渡）──
-      if (phase === PHASE.BLOOM && phaseTimer > 30) {
-        phase = PHASE.CONVERGE_NAME; phaseTimer = 0;
-        assignTargets(nameTargets, 0.06, 0.84);
-      } else if (phase === PHASE.CONVERGE_NAME && phaseTimer > 75) {
-        phase = PHASE.HOLD_NAME; phaseTimer = 0;
-      } else if (phase === PHASE.HOLD_NAME && phaseTimer > 28) {
-        // 直接从名字过渡到 CRT 边框
+      // ── 阶段切换（名字 → CRT 无缝过渡）──
+      if (phase === PHASE.CONVERGE_NAME && phaseTimer > 80) {
         phase = PHASE.CONVERGE_CRT; phaseTimer = 0;
-        assignTargets(crtTargets, 0.05, 0.83);
-        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.2); });
-      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 65) {
+        assignTargets(crtTargets, 0.05, 0.82);
+        particles.forEach(p => { p.alpha = Math.min(1, p.alpha * 1.15); });
+      } else if (phase === PHASE.CONVERGE_CRT && phaseTimer > 60) {
         phase = PHASE.HOLD_CRT; phaseTimer = 0;
         showCRTFrameReveal();
       }
@@ -426,8 +424,8 @@ function initIntroAnimation() {
         p.x += p.vx;
         p.y += p.vy;
 
-        // 正弦微动（代替随机抖动，更自然）
-        if (phase !== PHASE.BLOOM) {
+        // 正弦微动
+        if (phase !== PHASE.CONVERGE_NAME || phaseTimer > 15) {
           const wobble = Math.sin(phaseTimer * 0.18 + p.seed) * 0.8;
           const wobble2 = Math.cos(phaseTimer * 0.14 + p.seed + 1) * 0.6;
           pCtx.beginPath();
@@ -437,27 +435,24 @@ function initIntroAnimation() {
           pCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         }
 
-        // 色相在 CRT 汇聚阶段渐变
         let hue = p.hue;
         if (phase === PHASE.CONVERGE_CRT) {
-          hue = p.hue + (phaseTimer / 65) * 15;
+          hue = p.hue + (phaseTimer / 60) * 15;
         }
         pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha})`;
         pCtx.fill();
 
-        // 外层辉光
         pCtx.beginPath();
-        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 65) * 3) : p.size * 3.5;
+        const glowR = phase === PHASE.CONVERGE_CRT ? p.size * (4 + (phaseTimer / 60) * 3) : p.size * 3.5;
         pCtx.arc(p.x, p.y, glowR, 0, Math.PI * 2);
         pCtx.fillStyle = `hsla(${hue}, 100%, 70%, ${p.alpha * 0.07})`;
         pCtx.fill();
       });
 
-      // HOLD_CRT 阶段消退
-      if (phase === PHASE.HOLD_CRT && phaseTimer > 25) {
+      if (phase === PHASE.HOLD_CRT && phaseTimer > 20) {
         pCtx.fillStyle = 'rgba(0,0,0,0.15)';
         pCtx.fillRect(0, 0, pW, pH);
-        if (phaseTimer > 35) {
+        if (phaseTimer > 30) {
           particleCanvas.style.transition = 'opacity 0.4s';
           particleCanvas.style.opacity = '0';
           return;
