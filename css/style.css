@@ -44,6 +44,14 @@
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* 内联 SVG 图标 */
+.icon { width: auto; height: auto; vertical-align: middle; flex-shrink: 0; }
+.skill-card .icon-wrapper .icon, .skill-card .icon-wrapper svg { width: 26px; height: 26px; }
+.project-icon.icon-3d .icon { width: 24px; height: 24px; position: relative; z-index: 1; }
+.cc-icon-wrap .icon { width: 22px; height: 22px; position: relative; z-index: 1; }
+.hero-meta .icon { width: 16px; height: 16px; margin-right: 0.35rem; color: var(--purple); }
+.social-links .icon { width: 24px; height: 24px; }
+
 html { scroll-behavior: smooth; font-size: 16px; }
 
 body {
@@ -246,7 +254,7 @@ body::after {
   gap: 1.5rem; font-size: 0.9rem; color: var(--text-secondary);
   font-family: var(--font-mono); font-weight: 500;
 }
-.hero-meta i { color: var(--purple); margin-right: 0.35rem; }
+.hero-meta i, .hero-meta .icon { color: var(--purple); margin-right: 0.35rem; }
 
 .social-links { display: flex; gap: 1.5rem; margin-top: 2rem; justify-content: center; }
 .social-links a {
@@ -425,7 +433,7 @@ body::after {
   opacity: 0; transition: opacity 0.3s;
 }
 .skill-card:hover::before { opacity: 1; }
-.skill-card i { font-size: 2.5rem; color: var(--cyan); margin-bottom: 0.75rem; display: block; }
+.skill-card i, .skill-card .icon-wrapper .icon { font-size: 2.5rem; color: var(--cyan); margin-bottom: 0.75rem; display: block; }
 .skill-card h3 {
   font-family: var(--font-mono); font-size: 0.95rem; color: var(--text-primary);
   margin-bottom: 1rem; letter-spacing: 0.5px; font-weight: 700;
@@ -538,7 +546,7 @@ body::after {
   background: rgba(255, 0, 170, 0.12); border-color: var(--magenta);
   box-shadow: 0 0 18px rgba(255, 0, 170, 0.25);
 }
-.btn-link i { font-size: 0.85rem; }
+.btn-link i, .btn-link .icon { font-size: 0.85rem; }
 
 /* --- 项目卡片 Hover 展开 --- */
 .project-card {
@@ -668,7 +676,7 @@ body::after {
   opacity: 0; transition: opacity 0.4s;
 }
 .skill-card:hover .icon-wrapper::before { opacity: 1; }
-.skill-card .icon-wrapper i {
+.skill-card .icon-wrapper i, .skill-card .icon-wrapper .icon {
   font-size: 1.6rem; color: var(--cyan);
   transition: color 0.3s, transform 0.4s;
   display: inline-block;
@@ -678,7 +686,8 @@ body::after {
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.3), 0 0 60px rgba(180, 0, 255, 0.15);
   border-color: var(--cyan);
 }
-.skill-card:hover .icon-wrapper i {
+.skill-card:hover .icon-wrapper i,
+.skill-card:hover .icon-wrapper .icon {
   color: #fff;
   filter: drop-shadow(0 0 8px var(--cyan));
 }
@@ -727,7 +736,7 @@ body::after {
 @keyframes iconSpin {
   100% { transform: rotate(360deg); }
 }
-.project-icon.icon-3d i {
+.project-icon.icon-3d i, .project-icon.icon-3d .icon {
   font-size: 1.5rem; color: var(--cyan);
   position: relative; z-index: 1;
   transition: color 0.3s, transform 0.4s;
@@ -737,7 +746,8 @@ body::after {
   box-shadow: 0 0 25px rgba(0, 240, 255, 0.3), 0 0 50px rgba(180, 0, 255, 0.1);
   border-color: var(--cyan);
 }
-.project-card:hover .project-icon.icon-3d i {
+.project-card:hover .project-icon.icon-3d i,
+.project-card:hover .project-icon.icon-3d .icon {
   color: #fff;
   filter: drop-shadow(0 0 6px var(--cyan));
   animation: iconBounce 0.6s ease;
@@ -983,8 +993,8 @@ body::after {
   background: rgba(0,240,255,0.08);
   border: 1.5px solid rgba(0,240,255,0.2);
 }
-.cc-icon-wrap i { font-size: 1.4rem; color: var(--cyan); position: relative; z-index: 1; }
-.contact-card-v2.github .cc-icon-wrap i { color: var(--purple); }
+.cc-icon-wrap i, .cc-icon-wrap .icon { font-size: 1.4rem; color: var(--cyan); position: relative; z-index: 1; }
+.contact-card-v2.github .cc-icon-wrap i, .contact-card-v2.github .cc-icon-wrap .icon { color: var(--purple); }
 .contact-card-v2.github .cc-icon-wrap { background: rgba(180,0,255,0.08); border-color: rgba(180,0,255,0.2); }
 
 .cc-ripple {
